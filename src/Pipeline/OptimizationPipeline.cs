@@ -14,7 +14,7 @@ using GeneticSpecOptimizer.DocumentationExtraction.Converters;
 using GeneticSpecOptimizer.DocumentationExtraction.Parsers;
 using GeneticSpecOptimizer.DocumentationExtraction.Analyzers;
 using GeneticSpecOptimizer.DocumentationExtraction.Extractors;
-// using GeneticSpecOptimizer.SourceConsolidation; - Will be re-enabled when project reference is fixed
+using GeneticSpecOptimizer.SourceConsolidation;
 using GeneticSpecOptimizer.GeneticAlgorithm.Encoding;
 using GeneticSpecOptimizer.GeneticAlgorithm.Fitness;
 using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
@@ -199,22 +199,6 @@ namespace GeneticSpecOptimizer.Pipeline
         Completed
     }
     
-    // Temporary class definition until SourceConsolidation project reference is fixed
-    public class CodeAnalysisResult
-    {
-        public List<CodeComponent> Components { get; set; } = new List<CodeComponent>();
-        public List<CodeRelationship> Relationships { get; set; } = new List<CodeRelationship>();
-        public CodeHierarchy CodeHierarchy { get; set; } = new CodeHierarchy();
-        public List<SpecificationFile> InitialSpecifications { get; set; } = new List<SpecificationFile>();
-    }
-    
-    // Temporary class definition until SourceConsolidation project reference is fixed
-    public class DocumentationExtractionResult
-    {
-        public List<DocumentationExtraction.Extractors.DocumentationSnippet> Snippets { get; set; } = 
-            new List<DocumentationExtraction.Extractors.DocumentationSnippet>();
-    }
-    
     /// <summary>
     /// Implementation of optimization pipeline
     /// </summary>
@@ -256,7 +240,10 @@ namespace GeneticSpecOptimizer.Pipeline
             
             // Step 3: Source Consolidation
             ReportProgress(PipelineStage.SourceConsolidation, "Starting source consolidation", 0);
-            var consolidatedSpecs = ConsolidateSources(codeAnalysisResult, docExtractionResult);
+            var sourceConsolidator = new SourceConsolidation.SourceConsolidator();
+            var consolidatedSpecs = sourceConsolidator
+                .ConsolidateSources(codeAnalysisResult, docExtractionResult)
+                .ToList();
             ReportProgress(PipelineStage.SourceConsolidation, "Source consolidation completed", 100);
             
             // Step 4: Hierarchy Optimization
@@ -522,26 +509,9 @@ namespace GeneticSpecOptimizer.Pipeline
             CodeAnalysisResult codeAnalysis,
             DocumentationExtractionResult docExtraction)
         {
-            // Temporary implementation until SourceConsolidation reference is fixed
-            var consolidatedSpecs = codeAnalysis.InitialSpecifications.ToList();
-            
-            // Integrate documentation snippets
-            foreach (var snippet in docExtraction.Snippets)
-            {
-                var targetSpec = consolidatedSpecs.FirstOrDefault(s => s.ComponentId == snippet.TargetComponentId);
-                if (targetSpec != null)
-                {
-                    // Add documentation to specification
-                    if (!targetSpec.Content.Contains("\n## Documentation Notes\n"))
-                    {
-                        targetSpec.Content += "\n\n## Documentation Notes\n";
-                    }
-                    
-                    targetSpec.Content += $"\n* **Content:** {snippet.Content.Trim()}\n";
-                }
-            }
-            
-            return consolidatedSpecs;
+            // Delegates to the SourceConsolidation component (single source of truth)
+            ISourceConsolidator consolidator = new SourceConsolidation.SourceConsolidator();
+            return consolidator.ConsolidateSources(codeAnalysis, docExtraction).ToList();
         }
         
         private async Task<HierarchyOptimizationResult> OptimizeHierarchyAsync(

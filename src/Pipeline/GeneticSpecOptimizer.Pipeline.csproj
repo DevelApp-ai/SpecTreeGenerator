@@ -6,6 +6,7 @@
     <ProjectReference Include="..\DocumentationExtraction\GeneticSpecOptimizer.DocumentationExtraction.csproj" />
     <ProjectReference Include="..\GeneticAlgorithm\GeneticSpecOptimizer.GeneticAlgorithm.csproj" />
     <ProjectReference Include="..\HierarchyOptimization\GeneticSpecOptimizer.HierarchyOptimization.csproj" />
+    <ProjectReference Include="..\SourceConsolidation\GeneticSpecOptimizer.SourceConsolidation.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
