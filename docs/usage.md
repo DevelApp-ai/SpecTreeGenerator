@@ -216,5 +216,3 @@ If you encounter memory issues:
 For more detailed information about specific components, refer to:
 
 - [Architecture Overview](architecture.md)
-- [API Reference](api_reference.md)
-- [Genetic Algorithm Details](genetic_algorithm.md)

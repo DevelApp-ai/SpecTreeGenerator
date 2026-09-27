@@ -151,5 +151,3 @@ For more detailed information, refer to:
 
 - [Installation Guide](installation.md)
 - [Usage Guide](usage.md)
-- [API Reference](api_reference.md)
-- [Genetic Algorithm Details](genetic_algorithm.md)
