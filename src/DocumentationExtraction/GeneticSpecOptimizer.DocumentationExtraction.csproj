@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.54.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.MistralAI" Version="1.54.0-alpha" />
   </ItemGroup>
 
   <PropertyGroup>

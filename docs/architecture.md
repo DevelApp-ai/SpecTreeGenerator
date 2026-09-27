@@ -94,19 +94,33 @@ The `GeneticSpecOptimizer.Pipeline` project ties everything together:
 
 ## Integration Points
 
-### Azure AI Foundry Integration
+### AI-Backed Semantic Analysis (Semantic Kernel)
 
-The system can integrate with Azure AI Foundry for enhanced semantic analysis:
+The semantic analysis stage can use an LLM to map documentation sections to code
+components. The AI backend is configured through `OptimizationPipelineConfig`
+(see [Usage Guide](usage.md)) and is created by `SemanticKernelFactory`:
 
-- `SemanticKernelMistralService`: Integrates with Azure AI Foundry's Mistral model
-- Uses the Semantic Kernel SDK for communication with Azure AI Foundry
+- **Mistral AI** (default when `MistralApiKey` is set): uses the official
+  Semantic Kernel `MistralAI` connector (experimental package) against the
+  Mistral AI API. `SemanticKernelMistralService` extracts relevance-scored
+  snippets per section.
+- **Azure AI Foundry** (when `AzureAIFoundryEndpoint` + `AzureAIFoundryApiKey`
+  are set): uses the Azure OpenAI connector with the configured deployment.
+- **Local fallback** (default, no credentials required): when no AI credentials
+  are configured, `LocalSemanticKernelService` maps sections to components using
+  deterministic keyword matching. The happy path never requires credentials.
 
-### Markitdown Integration
+### Document Conversion (MarkitdownConverter)
 
-The system integrates with Markitdown for document format conversion:
+`MarkitdownConverter` converts documentation files to Markdown without any AI
+dependency:
 
-- Supports conversion from various formats (Word, PDF, etc.) to Markdown
-- Uses the Markitdown API for conversion
+- `.md`, `.txt` — returned as-is
+- `.html` — converted to Markdown (headings, lists, links, emphasis, code blocks)
+- `.docx` — text extracted from the Office Open XML document body
+- `.pdf` — **experimental**: best-effort text extraction from FlateDecode
+  content streams; scanned or CID-encoded PDFs are not supported and raise a
+  clear `NotSupportedException`
 
 ## Extension Points
 
