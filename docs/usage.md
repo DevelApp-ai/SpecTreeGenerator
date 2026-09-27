@@ -58,9 +58,12 @@ Console.WriteLine($"Size reduction: {result.Metrics.SizeReductionPercentage:F1}%
 | DocumentationFiles | List of paths to documentation files | Empty list |
 | OutputDirectory | Path to the output directory | (Required) |
 | OptimizerConfig | Configuration for the hierarchy optimizer | Default config |
-| AzureAIFoundryEndpoint | Azure AI Foundry endpoint for Semantic Kernel | Empty string |
+| AzureAIFoundryEndpoint | Azure AI Foundry endpoint for Semantic Kernel (used only when Mistral API key is not set) | Empty string |
 | AzureAIFoundryApiKey | Azure AI Foundry API key | Empty string |
 | AzureAIFoundryDeploymentName | Azure AI Foundry deployment name | "mistral" |
+| MistralApiKey | Mistral AI API key — enables Mistral-backed semantic analysis (takes priority over Azure settings) | Empty string |
+| MistralModel | Mistral AI model to use | "mistral-large-latest" |
+| MistralEndpoint | Optional custom Mistral-compatible endpoint | Empty string |
 
 #### HierarchyOptimizerConfig
 
@@ -109,9 +112,24 @@ var config = new OptimizationPipelineConfig
 };
 ```
 
-### Integration with Azure AI Foundry
+### AI-backed semantic analysis (optional)
 
-To use Azure AI Foundry for enhanced semantic analysis:
+The pipeline runs **without any credentials** by default, using a local,
+deterministic extractor. To enable LLM-backed semantic analysis, configure
+either backend:
+
+**Mistral AI (preferred):**
+
+```csharp
+var config = new OptimizationPipelineConfig
+{
+    // ... other settings ...
+    MistralApiKey = Environment.GetEnvironmentVariable("MISTRAL_API_KEY"),
+    MistralModel = "mistral-large-latest"
+};
+```
+
+**Azure AI Foundry:**
 
 ```csharp
 var config = new OptimizationPipelineConfig
@@ -122,6 +140,9 @@ var config = new OptimizationPipelineConfig
     AzureAIFoundryDeploymentName = "your-deployment-name"
 };
 ```
+
+When no credentials are configured, the pipeline uses
+`LocalSemanticKernelService` (keyword matching) — no network access needed.
 
 ### Processing Results
 
@@ -195,5 +216,3 @@ If you encounter memory issues:
 For more detailed information about specific components, refer to:
 
 - [Architecture Overview](architecture.md)
-- [API Reference](api_reference.md)
-- [Genetic Algorithm Details](genetic_algorithm.md)

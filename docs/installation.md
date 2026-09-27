@@ -29,8 +29,8 @@ The output should show version 8.0.0 or higher.
 #### Option A: Clone the Repository (if using Git)
 
 ```bash
-git clone https://github.com/yourusername/GeneticSpecOptimizer.git
-cd GeneticSpecOptimizer
+git clone https://github.com/DevelApp-ai/SpecTreeGenerator.git
+cd SpecTreeGenerator
 ```
 
 #### Option B: Download the Source Code
@@ -42,7 +42,7 @@ Download the source code as a ZIP file and extract it to your preferred location
 Navigate to the root directory of the project and build the solution:
 
 ```bash
-cd /path/to/GeneticSpecOptimizer
+cd /path/to/SpecTreeGenerator
 dotnet build
 ```
 
