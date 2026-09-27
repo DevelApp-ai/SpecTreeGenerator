@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\GeneticSpecOptimizer.Common.csproj" />
+    <ProjectReference Include="..\CodeAnalysis\GeneticSpecOptimizer.CodeAnalysis.csproj" />
+    <ProjectReference Include="..\DocumentationExtraction\GeneticSpecOptimizer.DocumentationExtraction.csproj" />
+    <ProjectReference Include="..\GeneticAlgorithm\GeneticSpecOptimizer.GeneticAlgorithm.csproj" />
+    <ProjectReference Include="..\HierarchyOptimization\GeneticSpecOptimizer.HierarchyOptimization.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
