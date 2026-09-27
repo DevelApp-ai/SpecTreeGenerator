@@ -19,7 +19,7 @@ using GeneticSpecOptimizer.GeneticAlgorithm.Encoding;
 using GeneticSpecOptimizer.GeneticAlgorithm.Fitness;
 using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
 using GeneticSpecOptimizer.HierarchyOptimization;
-// using Microsoft.SemanticKernel; - Will be updated for Azure AI Foundry compatibility
+using Microsoft.SemanticKernel;
 using System.IO;
 
 namespace GeneticSpecOptimizer.Pipeline
@@ -63,6 +63,23 @@ namespace GeneticSpecOptimizer.Pipeline
         /// Azure AI Foundry deployment name
         /// </summary>
         public string AzureAIFoundryDeploymentName { get; set; } = "mistral";
+
+        /// <summary>
+        /// Mistral AI API key (https://console.mistral.ai). When set, the pipeline
+        /// uses the Mistral AI API for semantic analysis. This takes priority over
+        /// the Azure AI Foundry settings.
+        /// </summary>
+        public string MistralApiKey { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Mistral AI model to use (e.g. "mistral-large-latest")
+        /// </summary>
+        public string MistralModel { get; set; } = "mistral-large-latest";
+
+        /// <summary>
+        /// Optional custom Mistral-compatible endpoint (defaults to the Mistral AI API)
+        /// </summary>
+        public string MistralEndpoint { get; set; } = string.Empty;
     }
     
     /// <summary>
@@ -222,11 +239,15 @@ namespace GeneticSpecOptimizer.Pipeline
             // Create output directory if it doesn't exist
             Directory.CreateDirectory(config.OutputDirectory);
             
-            // Initialize Semantic Kernel
-            var kernel = InitializeSemanticKernel(config);
-            
+            // Initialize Semantic Kernel (null when no AI credentials are configured)
+            var kernel = SemanticKernelFactory.TryCreate(config);
+            var kernelMode = SemanticKernelFactory.GetMode(config);
+
             // Report progress
-            ReportProgress(PipelineStage.Initialization, "Pipeline initialized", 0);
+            ReportProgress(PipelineStage.Initialization,
+                kernelMode == SemanticKernelMode.LocalFallback
+                    ? "Pipeline initialized (no AI credentials configured; using local semantic extraction)"
+                    : $"Pipeline initialized (semantic analysis via {kernelMode})", 0);
             
             // Step 1: Code Analysis
             ReportProgress(PipelineStage.CodeAnalysis, "Starting code analysis", 0);
@@ -266,27 +287,6 @@ namespace GeneticSpecOptimizer.Pipeline
                 Metrics = OptimizationMetrics.FromHierarchyOptimizationMetrics(optimizationResult.Metrics),
                 OutputFilePaths = outputFilePaths
             };
-        }
-        
-        // Temporary mock class for Kernel
-        private class MockKernel
-        {
-            public MockAIService AIService { get; } = new MockAIService();
-        }
-        
-        private object InitializeSemanticKernel(OptimizationPipelineConfig config)
-        {
-            // Temporary stub for Semantic Kernel initialization
-            // Will be properly implemented when Microsoft.SemanticKernel reference is updated
-            
-            // Create a simple mock object to represent the kernel
-            var mockKernel = new MockKernel();
-            
-            // Log configuration
-            Console.WriteLine($"Using Azure AI Foundry endpoint: {config.AzureAIFoundryEndpoint}");
-            Console.WriteLine($"Using deployment: {config.AzureAIFoundryDeploymentName}");
-            
-            return mockKernel;
         }
         
         private async Task<CodeAnalysisResult> AnalyzeCodeAsync(string sourceCodeDirectory)
@@ -329,8 +329,8 @@ namespace GeneticSpecOptimizer.Pipeline
             
             // Generate initial specifications
             var specificationGenerator = new SpecificationGenerator();
-            // Stub for the missing method
-            var initialSpecifications = await GenerateSpecificationsFromCodeStub(specificationGenerator, components, relationships, codeHierarchy);
+            var initialSpecifications = (await specificationGenerator
+                .GenerateSpecificationsAsync(codeHierarchy, includeImplementationDetails: false)).ToList();
             
             // Return result
             return new CodeAnalysisResult
@@ -342,66 +342,27 @@ namespace GeneticSpecOptimizer.Pipeline
             };
         }
         
-        // Stub for the missing method in SpecificationGenerator
-        private async Task<List<SpecificationFile>> GenerateSpecificationsFromCodeStub(
-            SpecificationGenerator generator, 
-            List<CodeComponent> components, 
-            List<CodeRelationship> relationships, 
-            CodeHierarchy codeHierarchy)
-        {
-            // This is a stub implementation that would normally call the actual method
-            // For now, we'll create some basic specifications based on the components
-            var specifications = new List<SpecificationFile>();
-            
-            foreach (var component in components)
-            {
-                var spec = new SpecificationFile
-                {
-                    ComponentId = component.Id,
-                    Name = component.Name,
-                    Content = $"# {component.Name}\n\n## Overview\n\nThis is a specification for {component.Name}.\n\n## Properties\n\n"
-                };
-                
-                // Add some basic content based on component type
-                switch (component.Type)
-                {
-                    case ComponentType.Class:
-                        spec.Content += "This is a class.\n";
-                        break;
-                    case ComponentType.Interface:
-                        spec.Content += "This is an interface.\n";
-                        break;
-                    case ComponentType.Enum:
-                        spec.Content += "This is an enum.\n";
-                        break;
-                    default:
-                        spec.Content += "This is a component.\n";
-                        break;
-                }
-                
-                specifications.Add(spec);
-            }
-            
-            // Simulate async operation
-            await Task.Delay(10);
-            
-            return specifications;
-        }
-        
         private async Task<DocumentationExtractionResult> ExtractDocumentationAsync(
             List<string> documentationFiles,
-            object kernel,
+            Kernel? kernel,
             CodeHierarchy codeHierarchy)
         {
             var snippets = new List<DocumentationExtraction.Extractors.DocumentationSnippet>();
             
-            // Create Markitdown converter - using a stub that accepts object instead of Kernel
-            var markitdownConverter = new StubMarkitdownConverter(kernel);
+            // Create Markitdown converter (no AI dependency; converts files directly)
+            var markitdownConverter = new MarkitdownConverter();
+            
+            // Use the AI-backed extractor when a kernel is configured,
+            // otherwise fall back to the local, deterministic extractor.
+            DocumentationExtraction.Extractors.ISemanticKernelService semanticExtractor =
+                kernel is not null
+                    ? new DocumentationExtraction.Extractors.SemanticKernelMistralService(kernel)
+                    : new DocumentationExtraction.Extractors.LocalSemanticKernelService();
             
             foreach (var docFile in documentationFiles)
             {
                 // Detect document type
-                var documentType = StubMarkitdownConverter.DetectDocumentType(docFile);
+                var documentType = MarkitdownConverter.DetectDocumentType(docFile);
                 
                 // Convert to Markdown
                 var markdownContent = await markitdownConverter.ConvertToMarkdownAsync(docFile, documentType);
@@ -414,8 +375,7 @@ namespace GeneticSpecOptimizer.Pipeline
                 var structureAnalyzer = new StructureAnalyzer();
                 var documentStructure = structureAnalyzer.AnalyzeStructure(parsedDocument);
                 
-                // Extract snippets - using a stub that accepts object instead of Kernel
-                var semanticExtractor = new StubSemanticKernelMistralService(kernel);
+                // Extract relevant snippets (AI-backed when configured)
                 var docSnippets = await semanticExtractor.ExtractRelevantSnippetsAsync(
                     parsedDocument, documentStructure, codeHierarchy);
                 
@@ -433,76 +393,6 @@ namespace GeneticSpecOptimizer.Pipeline
             {
                 Snippets = snippets
             };
-        }
-        
-        // Stub class for MarkitdownConverter that accepts object instead of Kernel
-        private class StubMarkitdownConverter
-        {
-            private readonly object _kernel;
-            
-            public StubMarkitdownConverter(object kernel)
-            {
-                _kernel = kernel;
-            }
-            
-            public static string DetectDocumentType(string filePath)
-            {
-                var extension = Path.GetExtension(filePath).ToLowerInvariant();
-                switch (extension)
-                {
-                    case ".md":
-                        return "markdown";
-                    case ".docx":
-                        return "word";
-                    case ".pdf":
-                        return "pdf";
-                    default:
-                        return "text";
-                }
-            }
-            
-            public async Task<string> ConvertToMarkdownAsync(string filePath, string documentType)
-            {
-                // Stub implementation
-                await Task.Delay(10);
-                return $"# Converted Document\n\nThis is a stub conversion of {filePath} from {documentType} format.";
-            }
-        }
-        
-        // Stub class for SemanticKernelMistralService that accepts object instead of Kernel
-        private class StubSemanticKernelMistralService
-        {
-            private readonly object _kernel;
-            
-            public StubSemanticKernelMistralService(object kernel)
-            {
-                _kernel = kernel;
-            }
-            
-            public async Task<List<DocumentationExtraction.Extractors.DocumentationSnippet>> ExtractRelevantSnippetsAsync(
-                object parsedDocument, object documentStructure, CodeHierarchy codeHierarchy)
-            {
-                // Stub implementation
-                await Task.Delay(10);
-                
-                var snippets = new List<DocumentationExtraction.Extractors.DocumentationSnippet>();
-                
-                // Create a sample snippet for each component in the hierarchy
-                foreach (var component in codeHierarchy.Components)
-                {
-                    var snippet = new DocumentationExtraction.Extractors.DocumentationSnippet
-                    {
-                        Content = $"Documentation for {component.Name}",
-                        TargetComponentId = component.Id,
-                        RelevanceScore = 0.8,
-                        SourceDocument = "stub-document.md"
-                    };
-                    
-                    snippets.Add(snippet);
-                }
-                
-                return snippets;
-            }
         }
         
         private List<SpecificationFile> ConsolidateSources(
@@ -534,40 +424,8 @@ namespace GeneticSpecOptimizer.Pipeline
                     progressPercentage);
             };
             
-            // Run optimization - using a stub that matches the expected signature
-            var result = await OptimizeHierarchyStub(hierarchyOptimizer, specifications, config);
-            
-            return result;
-        }
-        
-        // Stub for the missing method in HierarchyOptimizer
-        private async Task<HierarchyOptimizationResult> OptimizeHierarchyStub(
-            HierarchyOptimizer optimizer,
-            List<SpecificationFile> specifications,
-            HierarchyOptimizerConfig config)
-        {
-            // This is a stub implementation that would normally call the actual method
-            // For now, we'll create a basic result with the same specifications
-            
-            // Simulate optimization process
-            await Task.Delay(100);
-            
-            // Create a result with the same specifications
-            var result = new HierarchyOptimizationResult
-            {
-                OptimizedSpecifications = specifications,
-                Metrics = new HierarchyOptimization.OptimizationMetrics
-                {
-                    OriginalSize = specifications.Sum(s => s.Content.Length),
-                    OptimizedSize = specifications.Sum(s => s.Content.Length),
-                    TotalSections = specifications.Count,
-                    InheritedSections = 0,
-                    HierarchyDepth = 1,
-                    OptimizationTime = TimeSpan.FromSeconds(1)
-                }
-            };
-            
-            return result;
+            // Run optimization
+            return await hierarchyOptimizer.OptimizeHierarchyAsync(specifications, config);
         }
         
         private List<string> GenerateOutputFiles(List<SpecificationFile> specifications, string outputDirectory)
@@ -601,20 +459,4 @@ namespace GeneticSpecOptimizer.Pipeline
         }
     }
     
-    /// <summary>
-    /// Mock AI service for testing
-    /// </summary>
-    public class MockAIService
-    {
-        // Temporarily removed Microsoft.SemanticKernel.Services.IAIService implementation
-        // Will be properly implemented when the correct version of Semantic Kernel is referenced
-        
-        public IReadOnlyDictionary<string, object> Attributes => new Dictionary<string, object>();
-
-        public Task<object> GetResultAsync(object request, CancellationToken cancellationToken = default)
-        {
-            // Return a simple mock result
-            return Task.FromResult(new object());
-        }
-    }
 }
