@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.IO;
-using System.Linq;
 
 namespace GeneticSpecOptimizer.CodeAnalysis.Parsers
 {
@@ -42,7 +44,7 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Parsers
 
         public ILanguageParser GetParser(string language)
         {
-            if (_parsers.TryGetValue(language.ToLower(), out var parser))
+            if (_parsers.TryGetValue(language.ToLowerInvariant(), out var parser))
             {
                 return parser;
             }

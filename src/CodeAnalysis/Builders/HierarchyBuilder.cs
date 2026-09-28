@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using GeneticSpecOptimizer.Common.Models;
 using System.Linq;
+using System.Threading.Tasks;
+
+using GeneticSpecOptimizer.Common.Models;
 
 namespace GeneticSpecOptimizer.CodeAnalysis.Builders
 {
@@ -14,30 +15,30 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Builders
         /// <summary>
         /// Builds a code hierarchy from the extracted components
         /// </summary>
-        public CodeHierarchy BuildHierarchy(List<CodeComponent> components)
+        public static CodeHierarchy BuildHierarchy(List<CodeComponent> components)
         {
             var hierarchy = new CodeHierarchy();
-            
+
             // First pass: Add all components to the hierarchy
             foreach (var component in components)
             {
                 hierarchy.AddComponent(component);
             }
-            
+
             // Second pass: Reorganize to ensure proper parent-child relationships
             hierarchy.ReorganizeHierarchy();
-            
+
             return hierarchy;
         }
-        
+
         /// <summary>
         /// Updates the code hierarchy with component relationships
         /// </summary>
-        public void UpdateHierarchyWithRelationships(CodeHierarchy hierarchy, List<CodeRelationship> relationships)
+        public static void UpdateHierarchyWithRelationships(CodeHierarchy hierarchy, List<CodeRelationship> relationships)
         {
             // This method could be used to enhance the hierarchy with relationship information
             // For example, adding metadata to nodes based on their relationships
-            
+
             foreach (var relationship in relationships)
             {
                 if (hierarchy.NodeLookup.TryGetValue(relationship.SourceComponentId, out var sourceNode) &&
@@ -45,26 +46,28 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Builders
                 {
                     // Add relationship metadata to the nodes
                     string relationshipKey = $"relationship:{relationship.Type}";
-                    
+
                     // For the source node, add outgoing relationship
-                    if (!sourceNode.Metadata.ContainsKey(relationshipKey))
+                    if (!sourceNode.Metadata.TryGetValue(relationshipKey, out var outList))
                     {
-                        sourceNode.Metadata[relationshipKey] = new List<string>();
+                        outList = new List<string>();
+                        sourceNode.Metadata[relationshipKey] = outList;
                     }
-                    ((List<string>)sourceNode.Metadata[relationshipKey]).Add(targetNode.ComponentId);
-                    
+                    ((List<string>)outList).Add(targetNode.ComponentId);
+
                     // For the target node, add incoming relationship
                     string incomingKey = $"incoming:{relationship.Type}";
-                    if (!targetNode.Metadata.ContainsKey(incomingKey))
+                    if (!targetNode.Metadata.TryGetValue(incomingKey, out var inList))
                     {
-                        targetNode.Metadata[incomingKey] = new List<string>();
+                        inList = new List<string>();
+                        targetNode.Metadata[incomingKey] = inList;
                     }
-                    ((List<string>)targetNode.Metadata[incomingKey]).Add(sourceNode.ComponentId);
+                    ((List<string>)inList).Add(sourceNode.ComponentId);
                 }
             }
         }
     }
-    
+
     /// <summary>
     /// Extension of HierarchyNode to include metadata
     /// </summary>
@@ -79,21 +82,21 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Builders
             {
                 node.Metadata = new Dictionary<string, object>();
             }
-            
+
             node.Metadata[key] = value;
         }
-        
+
         /// <summary>
         /// Gets metadata from a hierarchy node
         /// </summary>
-        public static T GetMetadata<T>(this HierarchyNode node, string key, T defaultValue = default)
+        public static T GetMetadata<T>(this HierarchyNode node, string key, T? defaultValue = default)
         {
-            if (node.Metadata == null || !node.Metadata.ContainsKey(key))
+            if (node.Metadata == null || !node.Metadata.TryGetValue(key, out var raw))
             {
-                return defaultValue;
+                return defaultValue!;
             }
-            
-            return (T)node.Metadata[key];
+
+            return (T)raw!;
         }
     }
 }

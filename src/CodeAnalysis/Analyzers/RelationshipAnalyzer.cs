@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
 
 namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
 {
@@ -17,30 +19,30 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
         /// <summary>
         /// Analyzes relationships between components using the symbol table
         /// </summary>
-        public List<CodeRelationship> AnalyzeRelationships(List<CodeComponent> components, SymbolAnalysis.SymbolTable symbolTable, SyntaxTree syntaxTree)
+        public static List<CodeRelationship> AnalyzeRelationships(List<CodeComponent> components, SymbolAnalysis.SymbolTable symbolTable, SyntaxTree syntaxTree)
         {
             var relationships = new List<CodeRelationship>();
             var root = syntaxTree.GetRoot();
-            
+
             // Create a lookup for quick access to components by ID
             var componentLookup = components.ToDictionary(c => c.Id);
-            
+
             // Analyze inheritance relationships
             AnalyzeInheritanceRelationships(root, symbolTable, relationships, componentLookup);
-            
+
             // Analyze implementation relationships
             AnalyzeImplementationRelationships(root, symbolTable, relationships, componentLookup);
-            
+
             // Analyze dependency relationships
             AnalyzeDependencyRelationships(root, symbolTable, relationships, componentLookup);
-            
+
             // Analyze method call relationships
             AnalyzeMethodCallRelationships(root, symbolTable, relationships, componentLookup);
-            
+
             return relationships;
         }
-        
-        private void AnalyzeInheritanceRelationships(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeRelationship> relationships, Dictionary<string, CodeComponent> componentLookup)
+
+        private static void AnalyzeInheritanceRelationships(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeRelationship> relationships, Dictionary<string, CodeComponent> componentLookup)
         {
             var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
             foreach (var classDecl in classes)
@@ -55,10 +57,10 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                         {
                             if (namedTypeSymbol.TypeKind == TypeKind.Class)
                             {
-                                var sourceId = symbolTable.GetId(symbolTable.GetSymbol(classDecl));
+                                var sourceId = symbolTable.GetId(symbolTable.GetSymbol(classDecl)!);
                                 var targetId = symbolTable.GetId(baseTypeSymbol);
-                                
-                                if (sourceId != null && targetId != null && 
+
+                                if (sourceId != null && targetId != null &&
                                     componentLookup.ContainsKey(sourceId) && componentLookup.ContainsKey(targetId))
                                 {
                                     var relationship = new CodeRelationship
@@ -76,8 +78,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                 }
             }
         }
-        
-        private void AnalyzeImplementationRelationships(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeRelationship> relationships, Dictionary<string, CodeComponent> componentLookup)
+
+        private static void AnalyzeImplementationRelationships(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeRelationship> relationships, Dictionary<string, CodeComponent> componentLookup)
         {
             var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
             foreach (var classDecl in classes)
@@ -92,10 +94,10 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                         {
                             if (namedTypeSymbol.TypeKind == TypeKind.Interface)
                             {
-                                var sourceId = symbolTable.GetId(symbolTable.GetSymbol(classDecl));
+                                var sourceId = symbolTable.GetId(symbolTable.GetSymbol(classDecl)!);
                                 var targetId = symbolTable.GetId(baseTypeSymbol);
-                                
-                                if (sourceId != null && targetId != null && 
+
+                                if (sourceId != null && targetId != null &&
                                     componentLookup.ContainsKey(sourceId) && componentLookup.ContainsKey(targetId))
                                 {
                                     var relationship = new CodeRelationship
@@ -113,8 +115,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                 }
             }
         }
-        
-        private void AnalyzeDependencyRelationships(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeRelationship> relationships, Dictionary<string, CodeComponent> componentLookup)
+
+        private static void AnalyzeDependencyRelationships(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeRelationship> relationships, Dictionary<string, CodeComponent> componentLookup)
         {
             // Analyze field declarations for dependencies
             var fields = root.DescendantNodes().OfType<FieldDeclarationSyntax>();
@@ -126,8 +128,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                 {
                     var parentId = GetParentId(fieldDecl, symbolTable);
                     var targetId = symbolTable.GetId(fieldTypeSymbol);
-                    
-                    if (parentId != null && targetId != null && 
+
+                    if (parentId != null && targetId != null &&
                         componentLookup.ContainsKey(parentId) && componentLookup.ContainsKey(targetId))
                     {
                         var relationship = new CodeRelationship
@@ -141,7 +143,7 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                     }
                 }
             }
-            
+
             // Analyze property declarations for dependencies
             var properties = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
             foreach (var propertyDecl in properties)
@@ -152,8 +154,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                 {
                     var parentId = GetParentId(propertyDecl, symbolTable);
                     var targetId = symbolTable.GetId(propertyTypeSymbol);
-                    
-                    if (parentId != null && targetId != null && 
+
+                    if (parentId != null && targetId != null &&
                         componentLookup.ContainsKey(parentId) && componentLookup.ContainsKey(targetId))
                     {
                         var relationship = new CodeRelationship
@@ -168,8 +170,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                 }
             }
         }
-        
-        private void AnalyzeMethodCallRelationships(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeRelationship> relationships, Dictionary<string, CodeComponent> componentLookup)
+
+        private static void AnalyzeMethodCallRelationships(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeRelationship> relationships, Dictionary<string, CodeComponent> componentLookup)
         {
             var methodCalls = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
             foreach (var methodCall in methodCalls)
@@ -180,10 +182,10 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                     var containingMethod = methodCall.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
                     if (containingMethod != null)
                     {
-                        var sourceId = symbolTable.GetId(symbolTable.GetSymbol(containingMethod));
+                        var sourceId = symbolTable.GetId(symbolTable.GetSymbol(containingMethod)!);
                         var targetId = symbolTable.GetId(methodSymbol);
-                        
-                        if (sourceId != null && targetId != null && 
+
+                        if (sourceId != null && targetId != null &&
                             componentLookup.ContainsKey(sourceId) && componentLookup.ContainsKey(targetId))
                         {
                             var relationship = new CodeRelationship
@@ -199,8 +201,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Analyzers
                 }
             }
         }
-        
-        private string GetParentId(SyntaxNode node, SymbolAnalysis.SymbolTable symbolTable)
+
+        private static string? GetParentId(SyntaxNode node, SymbolAnalysis.SymbolTable symbolTable)
         {
             var parent = node.Parent;
             while (parent != null)
