@@ -28,27 +28,27 @@ namespace GeneticSpecOptimizer.Common.Models
         /// Unique identifier for this relationship
         /// </summary>
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        
+
         /// <summary>
         /// Type of relationship
         /// </summary>
         public RelationshipType Type { get; set; }
-        
+
         /// <summary>
         /// Source component ID
         /// </summary>
         public string SourceComponentId { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Target component ID
         /// </summary>
         public string TargetComponentId { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Additional metadata
         /// </summary>
         public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
-        
+
         /// <summary>
         /// Creates a deep clone of this relationship
         /// </summary>
@@ -63,7 +63,7 @@ namespace GeneticSpecOptimizer.Common.Models
                 Metadata = new Dictionary<string, object>(this.Metadata)
             };
         }
-        
+
         /// <summary>
         /// Returns a string representation of the relationship
         /// </summary>

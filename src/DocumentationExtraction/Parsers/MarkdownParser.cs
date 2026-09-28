@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using GeneticSpecOptimizer.Common.Models;
-using System.Text.RegularExpressions;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+using GeneticSpecOptimizer.Common.Models;
 
 namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
 {
@@ -15,29 +16,29 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
         /// <summary>
         /// Full text of the Markdown document
         /// </summary>
-        public string FullText { get; set; }
-        
+        public string FullText { get; set; } = string.Empty;
+
         /// <summary>
         /// Sections of the document
         /// </summary>
         public List<MarkdownSection> Sections { get; set; } = new List<MarkdownSection>();
-        
+
         /// <summary>
         /// Code blocks in the document
         /// </summary>
         public List<MarkdownCodeBlock> CodeBlocks { get; set; } = new List<MarkdownCodeBlock>();
-        
+
         /// <summary>
         /// Lists in the document
         /// </summary>
         public List<MarkdownList> Lists { get; set; } = new List<MarkdownList>();
-        
+
         /// <summary>
         /// Tables in the document
         /// </summary>
         public List<MarkdownTable> Tables { get; set; } = new List<MarkdownTable>();
     }
-    
+
     /// <summary>
     /// Represents a section in a Markdown document
     /// </summary>
@@ -47,38 +48,38 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
         /// Level of the section (1-6)
         /// </summary>
         public int Level { get; set; }
-        
+
         /// <summary>
         /// Title of the section
         /// </summary>
-        public string Title { get; set; }
-        
+        public string Title { get; set; } = string.Empty;
+
         /// <summary>
         /// Content of the section
         /// </summary>
-        public string Content { get; set; }
-        
+        public string Content { get; set; } = string.Empty;
+
         /// <summary>
         /// Start line of the section
         /// </summary>
         public int StartLine { get; set; }
-        
+
         /// <summary>
         /// End line of the section
         /// </summary>
         public int EndLine { get; set; }
-        
+
         /// <summary>
         /// Parent section (if any)
         /// </summary>
-        public MarkdownSection Parent { get; set; }
-        
+        public MarkdownSection? Parent { get; set; }
+
         /// <summary>
         /// Child sections
         /// </summary>
         public List<MarkdownSection> Children { get; set; } = new List<MarkdownSection>();
     }
-    
+
     /// <summary>
     /// Represents a code block in a Markdown document
     /// </summary>
@@ -87,24 +88,24 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
         /// <summary>
         /// Language of the code block
         /// </summary>
-        public string Language { get; set; }
-        
+        public string Language { get; set; } = string.Empty;
+
         /// <summary>
         /// Content of the code block
         /// </summary>
-        public string Content { get; set; }
-        
+        public string Content { get; set; } = string.Empty;
+
         /// <summary>
         /// Start line of the code block
         /// </summary>
         public int StartLine { get; set; }
-        
+
         /// <summary>
         /// End line of the code block
         /// </summary>
         public int EndLine { get; set; }
     }
-    
+
     /// <summary>
     /// Represents a list in a Markdown document
     /// </summary>
@@ -114,23 +115,23 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
         /// Items in the list
         /// </summary>
         public List<string> Items { get; set; } = new List<string>();
-        
+
         /// <summary>
         /// Whether the list is ordered
         /// </summary>
         public bool IsOrdered { get; set; }
-        
+
         /// <summary>
         /// Start line of the list
         /// </summary>
         public int StartLine { get; set; }
-        
+
         /// <summary>
         /// End line of the list
         /// </summary>
         public int EndLine { get; set; }
     }
-    
+
     /// <summary>
     /// Represents a table in a Markdown document
     /// </summary>
@@ -140,23 +141,23 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
         /// Headers of the table
         /// </summary>
         public List<string> Headers { get; set; } = new List<string>();
-        
+
         /// <summary>
         /// Rows of the table
         /// </summary>
         public List<List<string>> Rows { get; set; } = new List<List<string>>();
-        
+
         /// <summary>
         /// Start line of the table
         /// </summary>
         public int StartLine { get; set; }
-        
+
         /// <summary>
         /// End line of the table
         /// </summary>
         public int EndLine { get; set; }
     }
-    
+
     /// <summary>
     /// Interface for Markdown parser
     /// </summary>
@@ -164,7 +165,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
     {
         ParsedMarkdownDocument Parse(string markdownContent);
     }
-    
+
     /// <summary>
     /// Implementation of Markdown parser
     /// </summary>
@@ -176,41 +177,43 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
             {
                 FullText = markdownContent
             };
-            
+
             // Split content into lines
-            var lines = markdownContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-            
+            var lines = markdownContent.Split(LineSeparators, StringSplitOptions.None);
+
             // Parse sections
             document.Sections = ParseSections(lines);
-            
+
             // Parse code blocks
             document.CodeBlocks = ParseCodeBlocks(lines);
-            
+
             // Parse lists
             document.Lists = ParseLists(lines);
-            
+
             // Parse tables
             document.Tables = ParseTables(lines);
-            
+
             return document;
         }
-        
-        private List<MarkdownSection> ParseSections(string[] lines)
+
+        private static readonly string[] LineSeparators = { "\r\n", "\r", "\n" };
+
+        private static List<MarkdownSection> ParseSections(string[] lines)
         {
             var sections = new List<MarkdownSection>();
-            MarkdownSection currentSection = null;
-            
+            MarkdownSection? currentSection = null;
+
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
                 var headerMatch = Regex.Match(line, @"^(#{1,6})\s+(.+)$");
-                
+
                 if (headerMatch.Success)
                 {
                     // Found a header
                     var level = headerMatch.Groups[1].Value.Length;
                     var title = headerMatch.Groups[2].Value.Trim();
-                    
+
                     // Create a new section
                     var newSection = new MarkdownSection
                     {
@@ -219,7 +222,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                         StartLine = i,
                         EndLine = i
                     };
-                    
+
                     // Find parent section
                     if (currentSection != null)
                     {
@@ -237,7 +240,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                             {
                                 parent = parent.Parent;
                             }
-                            
+
                             if (parent != null)
                             {
                                 newSection.Parent = parent;
@@ -245,7 +248,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                             }
                         }
                     }
-                    
+
                     // Update current section
                     currentSection = newSection;
                     sections.Add(newSection);
@@ -257,21 +260,21 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                     currentSection.EndLine = i;
                 }
             }
-            
+
             return sections;
         }
-        
-        private List<MarkdownCodeBlock> ParseCodeBlocks(string[] lines)
+
+        private static List<MarkdownCodeBlock> ParseCodeBlocks(string[] lines)
         {
             var codeBlocks = new List<MarkdownCodeBlock>();
             bool inCodeBlock = false;
-            MarkdownCodeBlock currentBlock = null;
-            
+            MarkdownCodeBlock? currentBlock = null;
+
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                
-                if (line.StartsWith("```"))
+
+                if (line.StartsWith("```", StringComparison.Ordinal))
                 {
                     if (!inCodeBlock)
                     {
@@ -287,7 +290,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                     {
                         // End of code block
                         inCodeBlock = false;
-                        currentBlock.EndLine = i;
+                        currentBlock!.EndLine = i;
                         codeBlocks.Add(currentBlock);
                         currentBlock = null;
                     }
@@ -298,27 +301,27 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                     currentBlock.Content += line + "\n";
                 }
             }
-            
+
             return codeBlocks;
         }
-        
-        private List<MarkdownList> ParseLists(string[] lines)
+
+        private static List<MarkdownList> ParseLists(string[] lines)
         {
             var lists = new List<MarkdownList>();
-            MarkdownList currentList = null;
-            
+            MarkdownList? currentList = null;
+
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i].Trim();
                 var unorderedMatch = Regex.Match(line, @"^[-*+]\s+(.+)$");
                 var orderedMatch = Regex.Match(line, @"^\d+\.\s+(.+)$");
-                
+
                 if (unorderedMatch.Success || orderedMatch.Success)
                 {
-                    var itemContent = unorderedMatch.Success 
-                        ? unorderedMatch.Groups[1].Value 
+                    var itemContent = unorderedMatch.Success
+                        ? unorderedMatch.Groups[1].Value
                         : orderedMatch.Groups[1].Value;
-                    
+
                     if (currentList == null)
                     {
                         // Start a new list
@@ -329,7 +332,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                         };
                         lists.Add(currentList);
                     }
-                    
+
                     // Add item to current list
                     currentList.Items.Add(itemContent);
                     currentList.EndLine = i;
@@ -340,20 +343,20 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                     currentList = null;
                 }
             }
-            
+
             return lists;
         }
-        
-        private List<MarkdownTable> ParseTables(string[] lines)
+
+        private static List<MarkdownTable> ParseTables(string[] lines)
         {
             var tables = new List<MarkdownTable>();
-            MarkdownTable currentTable = null;
-            
+            MarkdownTable? currentTable = null;
+
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i].Trim();
-                
-                if (line.StartsWith("|") && line.EndsWith("|"))
+
+                if (line.StartsWith('|') && line.EndsWith('|'))
                 {
                     if (currentTable == null)
                     {
@@ -363,14 +366,14 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                             StartLine = i
                         };
                         tables.Add(currentTable);
-                        
+
                         // Parse headers
                         var headerCells = line.Split('|')
                             .Skip(1) // Skip the first empty cell
                             .Take(line.Count(c => c == '|') - 1) // Skip the last empty cell
                             .Select(cell => cell.Trim())
                             .ToList();
-                        
+
                         currentTable.Headers.AddRange(headerCells);
                     }
                     else if (line.Replace("|", "").Trim().All(c => c == '-' || c == ':'))
@@ -386,7 +389,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                             .Take(line.Count(c => c == '|') - 1) // Skip the last empty cell
                             .Select(cell => cell.Trim())
                             .ToList();
-                        
+
                         currentTable.Rows.Add(cells);
                         currentTable.EndLine = i;
                     }
@@ -397,7 +400,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
                     currentTable = null;
                 }
             }
-            
+
             return tables;
         }
     }

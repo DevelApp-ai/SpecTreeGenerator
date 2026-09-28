@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using GeneticSpecOptimizer.Common.Models;
-using Microsoft.SemanticKernel;
-using System.Text.Json;
 using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+using GeneticSpecOptimizer.Common.Models;
+
+using Microsoft.SemanticKernel;
 
 namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
 {
@@ -16,24 +18,24 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
         /// <summary>
         /// ID of the target code component this snippet relates to
         /// </summary>
-        public string TargetComponentId { get; set; }
-        
+        public string TargetComponentId { get; set; } = string.Empty;
+
         /// <summary>
         /// Content of the snippet
         /// </summary>
-        public string Content { get; set; }
-        
+        public string Content { get; set; } = string.Empty;
+
         /// <summary>
         /// Source document path
         /// </summary>
-        public string SourceDocument { get; set; }
-        
+        public string SourceDocument { get; set; } = string.Empty;
+
         /// <summary>
         /// Relevance score (0.0 to 1.0)
         /// </summary>
         public double RelevanceScore { get; set; }
     }
-    
+
     /// <summary>
     /// Interface for Semantic Kernel service
     /// </summary>
@@ -41,44 +43,44 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
     {
         Task<List<DocumentationSnippet>> ExtractRelevantSnippetsAsync(
             Parsers.ParsedMarkdownDocument document,
-            Analyzers.DocumentStructure structure,
+            Analyzers.DocumentStructure documentStructure,
             CodeHierarchy codeHierarchy);
     }
-    
+
     /// <summary>
     /// Implementation of Semantic Kernel service using Mistral LLM
     /// </summary>
     public class SemanticKernelMistralService : ISemanticKernelService
     {
         private readonly Kernel _kernel;
-        
+
         public SemanticKernelMistralService(Kernel kernel)
         {
             _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
         }
-        
+
         public async Task<List<DocumentationSnippet>> ExtractRelevantSnippetsAsync(
             Parsers.ParsedMarkdownDocument document,
-            Analyzers.DocumentStructure structure,
+            Analyzers.DocumentStructure documentStructure,
             CodeHierarchy codeHierarchy)
         {
             var snippets = new List<DocumentationSnippet>();
-            
+
             // Prepare code component information for the LLM
             var codeComponentInfo = SerializeCodeHierarchyForPrompt(codeHierarchy);
-            
+
             // Process each section to find relevant snippets
-            foreach (var section in structure.Sections)
+            foreach (var section in documentStructure.Sections)
             {
                 var sectionSnippets = await ExtractSnippetsFromSectionAsync(section, codeComponentInfo);
                 snippets.AddRange(sectionSnippets);
             }
-            
+
             return snippets;
         }
-        
+
         private async Task<List<DocumentationSnippet>> ExtractSnippetsFromSectionAsync(
-            Analyzers.StructureSection section, 
+            Analyzers.StructureSection section,
             string codeComponentInfo)
         {
             // Skip empty sections
@@ -86,7 +88,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
             {
                 return new List<DocumentationSnippet>();
             }
-            
+
             // Create a function to extract snippets
             var function = _kernel.CreateFunctionFromPrompt(
                 """
@@ -117,7 +119,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
                     }
                 }
             );
-            
+
             // Execute the function
             var result = await _kernel.InvokeAsync(function, new()
             {
@@ -125,24 +127,26 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
                 ["sectionTitle"] = section.Title,
                 ["sectionContent"] = section.Content
             });
-            
+
             // Parse the result
-            var snippets = ParseSnippetResult(result.GetValue<string>());
-            
+            var snippets = ParseSnippetResult(result.GetValue<string>() ?? "[]");
+
             // Process child sections recursively
             foreach (var childSection in section.Children)
             {
                 var childSnippets = await ExtractSnippetsFromSectionAsync(childSection, codeComponentInfo);
                 snippets.AddRange(childSnippets);
             }
-            
+
             return snippets;
         }
-        
-        private string SerializeCodeHierarchyForPrompt(CodeHierarchy hierarchy)
+
+        private static readonly JsonSerializerOptions CachedJsonOptions = new() { WriteIndented = true };
+
+        private static string SerializeCodeHierarchyForPrompt(CodeHierarchy hierarchy)
         {
             var components = new List<object>();
-            
+
             foreach (var node in hierarchy.NodeLookup.Values)
             {
                 components.Add(new
@@ -153,18 +157,18 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
                     parentId = node.Parent?.ComponentId
                 });
             }
-            
-            return JsonSerializer.Serialize(components, new JsonSerializerOptions { WriteIndented = true });
+
+            return JsonSerializer.Serialize(components, CachedJsonOptions);
         }
-        
-        private List<DocumentationSnippet> ParseSnippetResult(string jsonResult)
+
+        private static List<DocumentationSnippet> ParseSnippetResult(string jsonResult)
         {
             try
             {
                 // Parse the JSON result
                 using JsonDocument doc = JsonDocument.Parse(jsonResult);
                 JsonElement root = doc.RootElement;
-                
+
                 // Check if the result has a "snippets" property (some models might wrap the array)
                 JsonElement snippetsElement;
                 if (root.TryGetProperty("snippets", out snippetsElement))
@@ -181,14 +185,14 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
                             return ParseSnippetsArray(prop.Value);
                         }
                     }
-                    
+
                     // If we get here, try parsing the root as an array
                     if (root.ValueKind == JsonValueKind.Array)
                     {
                         return ParseSnippetsArray(root);
                     }
                 }
-                
+
                 // If we couldn't find an array, return an empty list
                 return new List<DocumentationSnippet>();
             }
@@ -199,22 +203,22 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
                 return new List<DocumentationSnippet>();
             }
         }
-        
-        private List<DocumentationSnippet> ParseSnippetsArray(JsonElement snippetsArray)
+
+        private static List<DocumentationSnippet> ParseSnippetsArray(JsonElement snippetsArray)
         {
             var snippets = new List<DocumentationSnippet>();
-            
+
             foreach (var element in snippetsArray.EnumerateArray())
             {
                 try
                 {
                     var snippet = new DocumentationSnippet
                     {
-                        TargetComponentId = element.GetProperty("targetComponentId").GetString(),
-                        Content = element.GetProperty("content").GetString(),
+                        TargetComponentId = element.GetProperty("targetComponentId").GetString() ?? string.Empty,
+                        Content = element.GetProperty("content").GetString() ?? string.Empty,
                         RelevanceScore = element.GetProperty("relevanceScore").GetDouble()
                     };
-                    
+
                     // Only include snippets with relevance score >= 0.7
                     if (snippet.RelevanceScore >= 0.7)
                     {
@@ -227,7 +231,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
                     continue;
                 }
             }
-            
+
             return snippets;
         }
     }

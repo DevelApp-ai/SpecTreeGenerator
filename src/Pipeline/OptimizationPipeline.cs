@@ -1,26 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.CodeAnalysis.Parsers;
-using GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis;
-using GeneticSpecOptimizer.CodeAnalysis.Extractors;
+
 using GeneticSpecOptimizer.CodeAnalysis.Analyzers;
 using GeneticSpecOptimizer.CodeAnalysis.Builders;
+using GeneticSpecOptimizer.CodeAnalysis.Extractors;
 using GeneticSpecOptimizer.CodeAnalysis.Generators;
-using GeneticSpecOptimizer.DocumentationExtraction.Converters;
-using GeneticSpecOptimizer.DocumentationExtraction.Parsers;
+using GeneticSpecOptimizer.CodeAnalysis.Parsers;
+using GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis;
+using GeneticSpecOptimizer.Common.Models;
 using GeneticSpecOptimizer.DocumentationExtraction.Analyzers;
+using GeneticSpecOptimizer.DocumentationExtraction.Converters;
 using GeneticSpecOptimizer.DocumentationExtraction.Extractors;
-using GeneticSpecOptimizer.SourceConsolidation;
+using GeneticSpecOptimizer.DocumentationExtraction.Parsers;
 using GeneticSpecOptimizer.GeneticAlgorithm.Encoding;
-using GeneticSpecOptimizer.GeneticAlgorithm.Fitness;
 using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
+using GeneticSpecOptimizer.GeneticAlgorithm.Fitness;
 using GeneticSpecOptimizer.HierarchyOptimization;
+using GeneticSpecOptimizer.SourceConsolidation;
+
 using Microsoft.SemanticKernel;
-using System.IO;
 
 namespace GeneticSpecOptimizer.Pipeline
 {
@@ -33,32 +35,32 @@ namespace GeneticSpecOptimizer.Pipeline
         /// Path to the source code directory
         /// </summary>
         public string SourceCodeDirectory { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Paths to documentation files
         /// </summary>
         public List<string> DocumentationFiles { get; set; } = new List<string>();
-        
+
         /// <summary>
         /// Output directory for optimized specifications
         /// </summary>
         public string OutputDirectory { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Configuration for hierarchy optimization
         /// </summary>
         public HierarchyOptimizerConfig OptimizerConfig { get; set; } = new HierarchyOptimizerConfig();
-        
+
         /// <summary>
         /// Azure AI Foundry endpoint for Semantic Kernel
         /// </summary>
         public string AzureAIFoundryEndpoint { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Azure AI Foundry API key
         /// </summary>
         public string AzureAIFoundryApiKey { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Azure AI Foundry deployment name
         /// </summary>
@@ -81,7 +83,7 @@ namespace GeneticSpecOptimizer.Pipeline
         /// </summary>
         public string MistralEndpoint { get; set; } = string.Empty;
     }
-    
+
     /// <summary>
     /// Optimization metrics for the pipeline
     /// </summary>
@@ -91,42 +93,42 @@ namespace GeneticSpecOptimizer.Pipeline
         /// Original size of specifications in characters
         /// </summary>
         public int OriginalSize { get; set; }
-        
+
         /// <summary>
         /// Optimized size of specifications in characters
         /// </summary>
         public int OptimizedSize { get; set; }
-        
+
         /// <summary>
         /// Percentage reduction in size
         /// </summary>
         public double SizeReductionPercentage => OriginalSize > 0 ? 100.0 * (1.0 - (double)OptimizedSize / OriginalSize) : 0;
-        
+
         /// <summary>
         /// Total number of sections in specifications
         /// </summary>
         public int TotalSections { get; set; }
-        
+
         /// <summary>
         /// Number of sections that are inherited
         /// </summary>
         public int InheritedSections { get; set; }
-        
+
         /// <summary>
         /// Percentage of sections that are inherited
         /// </summary>
         public double InheritancePercentage => TotalSections > 0 ? 100.0 * (double)InheritedSections / TotalSections : 0;
-        
+
         /// <summary>
         /// Depth of the hierarchy
         /// </summary>
         public int HierarchyDepth { get; set; }
-        
+
         /// <summary>
         /// Time taken for optimization
         /// </summary>
         public TimeSpan OptimizationTime { get; set; }
-        
+
         /// <summary>
         /// Convert from HierarchyOptimization.OptimizationMetrics
         /// </summary>
@@ -143,7 +145,7 @@ namespace GeneticSpecOptimizer.Pipeline
             };
         }
     }
-    
+
     /// <summary>
     /// Result of the optimization pipeline
     /// </summary>
@@ -153,18 +155,18 @@ namespace GeneticSpecOptimizer.Pipeline
         /// Optimized specifications
         /// </summary>
         public List<SpecificationFile> OptimizedSpecifications { get; set; } = new List<SpecificationFile>();
-        
+
         /// <summary>
         /// Optimization metrics
         /// </summary>
         public OptimizationMetrics Metrics { get; set; } = new OptimizationMetrics();
-        
+
         /// <summary>
         /// Output file paths
         /// </summary>
         public List<string> OutputFilePaths { get; set; } = new List<string>();
     }
-    
+
     /// <summary>
     /// Interface for optimization pipeline
     /// </summary>
@@ -174,13 +176,13 @@ namespace GeneticSpecOptimizer.Pipeline
         /// Runs the optimization pipeline
         /// </summary>
         Task<OptimizationPipelineResult> RunAsync(OptimizationPipelineConfig config);
-        
+
         /// <summary>
         /// Event raised when pipeline progress is updated
         /// </summary>
         event EventHandler<PipelineProgressEventArgs>? ProgressUpdated;
     }
-    
+
     /// <summary>
     /// Event arguments for pipeline progress
     /// </summary>
@@ -190,18 +192,18 @@ namespace GeneticSpecOptimizer.Pipeline
         /// Current stage of the pipeline
         /// </summary>
         public PipelineStage Stage { get; set; }
-        
+
         /// <summary>
         /// Progress message
         /// </summary>
         public string Message { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Progress percentage
         /// </summary>
         public double ProgressPercentage { get; set; }
     }
-    
+
     /// <summary>
     /// Stages of the pipeline
     /// </summary>
@@ -215,14 +217,14 @@ namespace GeneticSpecOptimizer.Pipeline
         OutputGeneration,
         Completed
     }
-    
+
     /// <summary>
     /// Implementation of optimization pipeline
     /// </summary>
     public class OptimizationPipeline : IOptimizationPipeline
     {
         public event EventHandler<PipelineProgressEventArgs>? ProgressUpdated;
-        
+
         public async Task<OptimizationPipelineResult> RunAsync(OptimizationPipelineConfig config)
         {
             // Validate configuration
@@ -230,15 +232,15 @@ namespace GeneticSpecOptimizer.Pipeline
             {
                 throw new ArgumentException("Source code directory is required");
             }
-            
+
             if (string.IsNullOrEmpty(config.OutputDirectory))
             {
                 throw new ArgumentException("Output directory is required");
             }
-            
+
             // Create output directory if it doesn't exist
             Directory.CreateDirectory(config.OutputDirectory);
-            
+
             // Initialize Semantic Kernel (null when no AI credentials are configured)
             var kernel = SemanticKernelFactory.TryCreate(config);
             var kernelMode = SemanticKernelFactory.GetMode(config);
@@ -248,17 +250,17 @@ namespace GeneticSpecOptimizer.Pipeline
                 kernelMode == SemanticKernelMode.LocalFallback
                     ? "Pipeline initialized (no AI credentials configured; using local semantic extraction)"
                     : $"Pipeline initialized (semantic analysis via {kernelMode})", 0);
-            
+
             // Step 1: Code Analysis
             ReportProgress(PipelineStage.CodeAnalysis, "Starting code analysis", 0);
             var codeAnalysisResult = await AnalyzeCodeAsync(config.SourceCodeDirectory);
             ReportProgress(PipelineStage.CodeAnalysis, "Code analysis completed", 100);
-            
+
             // Step 2: Documentation Extraction
             ReportProgress(PipelineStage.DocumentationExtraction, "Starting documentation extraction", 0);
             var docExtractionResult = await ExtractDocumentationAsync(config.DocumentationFiles, kernel, codeAnalysisResult.CodeHierarchy);
             ReportProgress(PipelineStage.DocumentationExtraction, "Documentation extraction completed", 100);
-            
+
             // Step 3: Source Consolidation
             ReportProgress(PipelineStage.SourceConsolidation, "Starting source consolidation", 0);
             var sourceConsolidator = new SourceConsolidation.SourceConsolidator();
@@ -266,20 +268,20 @@ namespace GeneticSpecOptimizer.Pipeline
                 .ConsolidateSources(codeAnalysisResult, docExtractionResult)
                 .ToList();
             ReportProgress(PipelineStage.SourceConsolidation, "Source consolidation completed", 100);
-            
+
             // Step 4: Hierarchy Optimization
             ReportProgress(PipelineStage.HierarchyOptimization, "Starting hierarchy optimization", 0);
             var optimizationResult = await OptimizeHierarchyAsync(consolidatedSpecs, config.OptimizerConfig);
             ReportProgress(PipelineStage.HierarchyOptimization, "Hierarchy optimization completed", 100);
-            
+
             // Step 5: Output Generation
             ReportProgress(PipelineStage.OutputGeneration, "Generating output files", 0);
             var outputFilePaths = GenerateOutputFiles(optimizationResult.OptimizedSpecifications, config.OutputDirectory);
             ReportProgress(PipelineStage.OutputGeneration, "Output files generated", 100);
-            
+
             // Report completion
             ReportProgress(PipelineStage.Completed, "Pipeline completed", 100);
-            
+
             // Return result
             return new OptimizationPipelineResult
             {
@@ -288,50 +290,46 @@ namespace GeneticSpecOptimizer.Pipeline
                 OutputFilePaths = outputFilePaths
             };
         }
-        
-        private async Task<CodeAnalysisResult> AnalyzeCodeAsync(string sourceCodeDirectory)
+
+        private static async Task<CodeAnalysisResult> AnalyzeCodeAsync(string sourceCodeDirectory)
         {
             // Get C# source files
             var sourceFiles = Directory.GetFiles(sourceCodeDirectory, "*.cs", SearchOption.AllDirectories);
-            
+
             // Create language parser factory
             var parserFactory = new LanguageParserFactory();
             var parser = parserFactory.GetParser("csharp");
-            
+
             // Parse source files
             var components = new List<CodeComponent>();
             var relationships = new List<CodeRelationship>();
-            
+
             foreach (var sourceFile in sourceFiles)
             {
                 // Parse file
                 var syntaxTree = await parser.ParseFileAsync(sourceFile);
-                
+
                 // Build symbol table
-                var symbolTableBuilder = new SymbolTableBuilder();
-                var symbolTable = await symbolTableBuilder.BuildSymbolTableAsync(syntaxTree, sourceFile);
-                
+                var symbolTable = await SymbolTableBuilder.BuildSymbolTableAsync(syntaxTree, sourceFile);
+
                 // Extract components
-                var componentExtractor = new ComponentExtractor();
-                var fileComponents = componentExtractor.ExtractComponents(syntaxTree, symbolTable);
+                var fileComponents = ComponentExtractor.ExtractComponents(syntaxTree, symbolTable);
                 components.AddRange(fileComponents);
-                
+
                 // Analyze relationships
-                var relationshipAnalyzer = new RelationshipAnalyzer();
-                var fileRelationships = relationshipAnalyzer.AnalyzeRelationships(fileComponents, symbolTable, syntaxTree);
+                var fileRelationships = RelationshipAnalyzer.AnalyzeRelationships(fileComponents, symbolTable, syntaxTree);
                 relationships.AddRange(fileRelationships);
             }
-            
+
             // Build code hierarchy
-            var hierarchyBuilder = new HierarchyBuilder();
-            var codeHierarchy = hierarchyBuilder.BuildHierarchy(components);
-            hierarchyBuilder.UpdateHierarchyWithRelationships(codeHierarchy, relationships);
-            
+            var codeHierarchy = HierarchyBuilder.BuildHierarchy(components);
+            HierarchyBuilder.UpdateHierarchyWithRelationships(codeHierarchy, relationships);
+
             // Generate initial specifications
             var specificationGenerator = new SpecificationGenerator();
             var initialSpecifications = (await specificationGenerator
                 .GenerateSpecificationsAsync(codeHierarchy, includeImplementationDetails: false)).ToList();
-            
+
             // Return result
             return new CodeAnalysisResult
             {
@@ -341,79 +339,79 @@ namespace GeneticSpecOptimizer.Pipeline
                 InitialSpecifications = initialSpecifications
             };
         }
-        
-        private async Task<DocumentationExtractionResult> ExtractDocumentationAsync(
+
+        private static async Task<DocumentationExtractionResult> ExtractDocumentationAsync(
             List<string> documentationFiles,
             Kernel? kernel,
             CodeHierarchy codeHierarchy)
         {
             var snippets = new List<DocumentationExtraction.Extractors.DocumentationSnippet>();
-            
+
             // Create Markitdown converter (no AI dependency; converts files directly)
             var markitdownConverter = new MarkitdownConverter();
-            
+
             // Use the AI-backed extractor when a kernel is configured,
             // otherwise fall back to the local, deterministic extractor.
             DocumentationExtraction.Extractors.ISemanticKernelService semanticExtractor =
                 kernel is not null
                     ? new DocumentationExtraction.Extractors.SemanticKernelMistralService(kernel)
                     : new DocumentationExtraction.Extractors.LocalSemanticKernelService();
-            
+
             foreach (var docFile in documentationFiles)
             {
                 // Detect document type
                 var documentType = MarkitdownConverter.DetectDocumentType(docFile);
-                
+
                 // Convert to Markdown
                 var markdownContent = await markitdownConverter.ConvertToMarkdownAsync(docFile, documentType);
-                
+
                 // Parse Markdown
                 var markdownParser = new MarkdownParser();
                 var parsedDocument = markdownParser.Parse(markdownContent);
-                
+
                 // Analyze structure
                 var structureAnalyzer = new StructureAnalyzer();
                 var documentStructure = structureAnalyzer.AnalyzeStructure(parsedDocument);
-                
+
                 // Extract relevant snippets (AI-backed when configured)
                 var docSnippets = await semanticExtractor.ExtractRelevantSnippetsAsync(
                     parsedDocument, documentStructure, codeHierarchy);
-                
+
                 // Set source document
                 foreach (var snippet in docSnippets)
                 {
                     snippet.SourceDocument = docFile;
                 }
-                
+
                 snippets.AddRange(docSnippets);
             }
-            
+
             // Return result
             return new DocumentationExtractionResult
             {
                 Snippets = snippets
             };
         }
-        
-        private List<SpecificationFile> ConsolidateSources(
+
+        private static List<SpecificationFile> ConsolidateSources(
             CodeAnalysisResult codeAnalysis,
             DocumentationExtractionResult docExtraction)
         {
             // Delegates to the SourceConsolidation component (single source of truth)
-            ISourceConsolidator consolidator = new SourceConsolidation.SourceConsolidator();
+            SourceConsolidation.SourceConsolidator consolidator = new();
             return consolidator.ConsolidateSources(codeAnalysis, docExtraction).ToList();
         }
-        
+
         private async Task<HierarchyOptimizationResult> OptimizeHierarchyAsync(
             List<SpecificationFile> specifications,
             HierarchyOptimizerConfig config)
         {
             // Create genome encoder
             var genomeEncoder = new SpecificationGenomeEncoder();
-            
+
             // Create hierarchy optimizer
             var hierarchyOptimizer = new HierarchyOptimizer(genomeEncoder);
-            
+
             // Subscribe to progress updates
             hierarchyOptimizer.OptimizationProgressUpdated += (sender, e) =>
             {
@@ -423,31 +421,31 @@ namespace GeneticSpecOptimizer.Pipeline
                     $"Optimizing hierarchy: Generation {e.CurrentGeneration}/{e.MaxGenerations}, Best fitness: {e.BestFitness:F4}",
                     progressPercentage);
             };
-            
+
             // Run optimization
             return await hierarchyOptimizer.OptimizeHierarchyAsync(specifications, config);
         }
-        
-        private List<string> GenerateOutputFiles(List<SpecificationFile> specifications, string outputDirectory)
+
+        private static List<string> GenerateOutputFiles(List<SpecificationFile> specifications, string outputDirectory)
         {
             var outputFilePaths = new List<string>();
-            
+
             foreach (var spec in specifications)
             {
                 // Generate file name
                 var fileName = spec.Name.Replace(" ", "_").Replace(".", "_") + ".md";
                 var filePath = Path.Combine(outputDirectory, fileName);
-                
+
                 // Write file
                 File.WriteAllText(filePath, spec.Content);
-                
+
                 // Add to output paths
                 outputFilePaths.Add(filePath);
             }
-            
+
             return outputFilePaths;
         }
-        
+
         private void ReportProgress(PipelineStage stage, string message, double progressPercentage)
         {
             ProgressUpdated?.Invoke(this, new PipelineProgressEventArgs
@@ -458,5 +456,5 @@ namespace GeneticSpecOptimizer.Pipeline
             });
         }
     }
-    
+
 }

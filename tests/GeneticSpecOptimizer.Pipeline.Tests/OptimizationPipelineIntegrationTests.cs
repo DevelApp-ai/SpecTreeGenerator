@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Pipeline;
+
 using Xunit;
 
 namespace GeneticSpecOptimizer.Pipeline.Tests;
@@ -31,6 +33,7 @@ public class OptimizationPipelineIntegrationTests : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         Directory.Delete(_tempDir, recursive: true);
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
 using GeneticSpecOptimizer.GeneticAlgorithm.Models;
 
@@ -18,11 +19,12 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Encoding
         /// </summary>
         public async Task<SpecificationGenome> EncodeAsync(IEnumerable<SpecificationFile> specifications)
         {
+            await Task.CompletedTask;
             var genome = new SpecificationGenome();
-            
+
             // Add specifications
             genome.SpecificationFiles.AddRange(specifications.Select(s => s.Clone()));
-            
+
             // Extract parent-child relationships
             foreach (var spec in genome.SpecificationFiles)
             {
@@ -31,22 +33,23 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Encoding
                     genome.ParentChildRelationships[spec.Id] = spec.ParentSpecificationId;
                 }
             }
-            
+
             return genome;
         }
-        
+
         /// <summary>
         /// Decodes a genome into specifications
         /// </summary>
         public async Task<IEnumerable<SpecificationFile>> DecodeAsync(SpecificationGenome genome)
         {
+            await Task.CompletedTask;
             var specifications = new List<SpecificationFile>();
-            
+
             // Clone specifications
             foreach (var spec in genome.SpecificationFiles)
             {
                 var clone = spec.Clone();
-                
+
                 // Update parent-child relationships
                 if (genome.ParentChildRelationships.TryGetValue(spec.Id, out var parentId))
                 {
@@ -56,17 +59,17 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Encoding
                 {
                     clone.ParentSpecificationId = null;
                 }
-                
+
                 specifications.Add(clone);
             }
-            
+
             return specifications;
         }
-        
+
         /// <summary>
         /// Generates a new specification file
         /// </summary>
-        public SpecificationFile GenerateSpecificationFile(string name, string content, string componentId, string? parentSpecificationId = null)
+        public static SpecificationFile GenerateSpecificationFile(string name, string content, string componentId, string? parentSpecificationId = null)
         {
             return new SpecificationFile
             {

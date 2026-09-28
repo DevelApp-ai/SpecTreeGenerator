@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Pipeline;
 
 namespace GeneticSpecOptimizer.Sample
@@ -48,7 +49,7 @@ namespace GeneticSpecOptimizer.Sample
 
             // Create pipeline
             var pipeline = new OptimizationPipeline();
-            
+
             // Subscribe to progress updates
             pipeline.ProgressUpdated += (sender, e) =>
             {

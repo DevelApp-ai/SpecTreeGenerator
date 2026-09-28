@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.CodeAnalysis.Text;
 
 namespace GeneticSpecOptimizer.Common.Models
@@ -14,17 +15,17 @@ namespace GeneticSpecOptimizer.Common.Models
         /// Start position of the span
         /// </summary>
         public int Start { get; set; }
-        
+
         /// <summary>
         /// End position of the span
         /// </summary>
         public int End { get; set; }
-        
+
         /// <summary>
         /// Length of the span
         /// </summary>
         public int Length => End - Start;
-        
+
         /// <summary>
         /// Creates a new text span
         /// </summary>
@@ -38,11 +39,11 @@ namespace GeneticSpecOptimizer.Common.Models
                 start = end;
                 end = temp;
             }
-            
+
             Start = start;
             End = end;
         }
-        
+
         /// <summary>
         /// Returns a string representation of the span
         /// </summary>
@@ -50,7 +51,7 @@ namespace GeneticSpecOptimizer.Common.Models
         {
             return $"[{Start}..{End})";
         }
-        
+
         /// <summary>
         /// Converts to Microsoft.CodeAnalysis.Text.TextSpan
         /// </summary>
@@ -60,7 +61,7 @@ namespace GeneticSpecOptimizer.Common.Models
             int length = Math.Max(0, span.Length);
             return new Microsoft.CodeAnalysis.Text.TextSpan(span.Start, length);
         }
-        
+
         /// <summary>
         /// Converts from Microsoft.CodeAnalysis.Text.TextSpan
         /// </summary>

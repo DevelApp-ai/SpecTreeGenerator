@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
-using System.IO;
 
 namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
 {
@@ -18,37 +20,37 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
         /// <summary>
         /// Extracts code components from a syntax tree using the symbol table
         /// </summary>
-        public List<CodeComponent> ExtractComponents(SyntaxTree syntaxTree, SymbolAnalysis.SymbolTable symbolTable)
+        public static List<CodeComponent> ExtractComponents(SyntaxTree syntaxTree, SymbolAnalysis.SymbolTable symbolTable)
         {
             var components = new List<CodeComponent>();
             var root = syntaxTree.GetRoot();
             var filePath = syntaxTree.FilePath;
-            
+
             // Extract namespaces
             ExtractNamespaces(root, symbolTable, components, filePath);
-            
+
             // Extract classes
             ExtractClasses(root, symbolTable, components, filePath);
-            
+
             // Extract interfaces
             ExtractInterfaces(root, symbolTable, components, filePath);
-            
+
             // Extract methods
             ExtractMethods(root, symbolTable, components, filePath);
-            
+
             // Extract properties
             ExtractProperties(root, symbolTable, components, filePath);
-            
+
             // Extract fields
             ExtractFields(root, symbolTable, components, filePath);
-            
+
             // Extract enums
             ExtractEnums(root, symbolTable, components, filePath);
-            
+
             return components;
         }
-        
-        private void ExtractNamespaces(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
+
+        private static void ExtractNamespaces(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
         {
             var namespaces = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>();
             foreach (var namespaceDecl in namespaces)
@@ -59,11 +61,11 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                     var id = symbolTable.GetId(symbol);
                     var component = new CodeComponent
                     {
-                        Id = id,
+                        Id = id ?? throw new InvalidOperationException("Symbol id unexpectedly null"),
                         Name = namespaceDecl.Name.ToString(),
                         Type = ComponentType.Namespace,
                         Namespace = namespaceDecl.Name.ToString(),
-                        ParentId = null, // Namespaces are top-level
+                        ParentId = string.Empty, // Namespaces are top-level
                         SourceFilePath = filePath,
                         StartLine = GetLineNumber(namespaceDecl.SpanStart, syntaxTree: namespaceDecl.SyntaxTree),
                         EndLine = GetLineNumber(namespaceDecl.Span.End, syntaxTree: namespaceDecl.SyntaxTree),
@@ -74,8 +76,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 }
             }
         }
-        
-        private void ExtractClasses(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
+
+        private static void ExtractClasses(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
         {
             var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
             foreach (var classDecl in classes)
@@ -85,14 +87,14 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 {
                     var id = symbolTable.GetId(symbol);
                     var parentId = GetParentId(classDecl, symbolTable);
-                    
+
                     var component = new CodeComponent
                     {
-                        Id = id,
+                        Id = id ?? throw new InvalidOperationException("Symbol id unexpectedly null"),
                         Name = classDecl.Identifier.Text,
                         Type = ComponentType.Class,
                         Namespace = GetNamespace(classDecl),
-                        ParentId = parentId,
+                        ParentId = parentId ?? string.Empty,
                         SourceFilePath = filePath,
                         StartLine = GetLineNumber(classDecl.SpanStart, syntaxTree: classDecl.SyntaxTree),
                         EndLine = GetLineNumber(classDecl.Span.End, syntaxTree: classDecl.SyntaxTree),
@@ -103,8 +105,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 }
             }
         }
-        
-        private void ExtractInterfaces(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
+
+        private static void ExtractInterfaces(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
         {
             var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>();
             foreach (var interfaceDecl in interfaces)
@@ -114,14 +116,14 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 {
                     var id = symbolTable.GetId(symbol);
                     var parentId = GetParentId(interfaceDecl, symbolTable);
-                    
+
                     var component = new CodeComponent
                     {
-                        Id = id,
+                        Id = id ?? throw new InvalidOperationException("Symbol id unexpectedly null"),
                         Name = interfaceDecl.Identifier.Text,
                         Type = ComponentType.Interface,
                         Namespace = GetNamespace(interfaceDecl),
-                        ParentId = parentId,
+                        ParentId = parentId ?? string.Empty,
                         SourceFilePath = filePath,
                         StartLine = GetLineNumber(interfaceDecl.SpanStart, syntaxTree: interfaceDecl.SyntaxTree),
                         EndLine = GetLineNumber(interfaceDecl.Span.End, syntaxTree: interfaceDecl.SyntaxTree),
@@ -132,8 +134,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 }
             }
         }
-        
-        private void ExtractMethods(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
+
+        private static void ExtractMethods(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
         {
             var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
             foreach (var methodDecl in methods)
@@ -143,14 +145,14 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 {
                     var id = symbolTable.GetId(symbol);
                     var parentId = GetParentId(methodDecl, symbolTable);
-                    
+
                     var component = new CodeComponent
                     {
-                        Id = id,
+                        Id = id ?? throw new InvalidOperationException("Symbol id unexpectedly null"),
                         Name = methodDecl.Identifier.Text,
                         Type = ComponentType.Method,
                         Namespace = GetNamespace(methodDecl),
-                        ParentId = parentId,
+                        ParentId = parentId ?? string.Empty,
                         SourceFilePath = filePath,
                         StartLine = GetLineNumber(methodDecl.SpanStart, syntaxTree: methodDecl.SyntaxTree),
                         EndLine = GetLineNumber(methodDecl.Span.End, syntaxTree: methodDecl.SyntaxTree),
@@ -161,8 +163,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 }
             }
         }
-        
-        private void ExtractProperties(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
+
+        private static void ExtractProperties(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
         {
             var properties = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
             foreach (var propertyDecl in properties)
@@ -172,14 +174,14 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 {
                     var id = symbolTable.GetId(symbol);
                     var parentId = GetParentId(propertyDecl, symbolTable);
-                    
+
                     var component = new CodeComponent
                     {
-                        Id = id,
+                        Id = id ?? throw new InvalidOperationException("Symbol id unexpectedly null"),
                         Name = propertyDecl.Identifier.Text,
                         Type = ComponentType.Property,
                         Namespace = GetNamespace(propertyDecl),
-                        ParentId = parentId,
+                        ParentId = parentId ?? string.Empty,
                         SourceFilePath = filePath,
                         StartLine = GetLineNumber(propertyDecl.SpanStart, syntaxTree: propertyDecl.SyntaxTree),
                         EndLine = GetLineNumber(propertyDecl.Span.End, syntaxTree: propertyDecl.SyntaxTree),
@@ -190,8 +192,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 }
             }
         }
-        
-        private void ExtractFields(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
+
+        private static void ExtractFields(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
         {
             var fields = root.DescendantNodes().OfType<FieldDeclarationSyntax>();
             foreach (var fieldDecl in fields)
@@ -203,14 +205,14 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                     {
                         var id = symbolTable.GetId(symbol);
                         var parentId = GetParentId(fieldDecl, symbolTable);
-                        
+
                         var component = new CodeComponent
                         {
-                            Id = id,
+                            Id = id ?? throw new InvalidOperationException("Symbol id unexpectedly null"),
                             Name = variable.Identifier.Text,
                             Type = ComponentType.Field,
                             Namespace = GetNamespace(fieldDecl),
-                            ParentId = parentId,
+                            ParentId = parentId ?? string.Empty,
                             SourceFilePath = filePath,
                             StartLine = GetLineNumber(fieldDecl.SpanStart, syntaxTree: fieldDecl.SyntaxTree),
                             EndLine = GetLineNumber(fieldDecl.Span.End, syntaxTree: fieldDecl.SyntaxTree),
@@ -222,8 +224,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 }
             }
         }
-        
-        private void ExtractEnums(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
+
+        private static void ExtractEnums(SyntaxNode root, SymbolAnalysis.SymbolTable symbolTable, List<CodeComponent> components, string filePath)
         {
             var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
             foreach (var enumDecl in enums)
@@ -233,14 +235,14 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 {
                     var id = symbolTable.GetId(symbol);
                     var parentId = GetParentId(enumDecl, symbolTable);
-                    
+
                     var component = new CodeComponent
                     {
-                        Id = id,
+                        Id = id ?? throw new InvalidOperationException("Symbol id unexpectedly null"),
                         Name = enumDecl.Identifier.Text,
                         Type = ComponentType.Enum,
                         Namespace = GetNamespace(enumDecl),
-                        ParentId = parentId,
+                        ParentId = parentId ?? string.Empty,
                         SourceFilePath = filePath,
                         StartLine = GetLineNumber(enumDecl.SpanStart, syntaxTree: enumDecl.SyntaxTree),
                         EndLine = GetLineNumber(enumDecl.Span.End, syntaxTree: enumDecl.SyntaxTree),
@@ -251,8 +253,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 }
             }
         }
-        
-        private string GetParentId(SyntaxNode node, SymbolAnalysis.SymbolTable symbolTable)
+
+        private static string? GetParentId(SyntaxNode node, SymbolAnalysis.SymbolTable symbolTable)
         {
             var parent = node.Parent;
             while (parent != null)
@@ -266,8 +268,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
             }
             return null;
         }
-        
-        private string GetNamespace(SyntaxNode node)
+
+        private static string GetNamespace(SyntaxNode node)
         {
             var parent = node.Parent;
             while (parent != null)
@@ -280,8 +282,8 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
             }
             return string.Empty;
         }
-        
-        private int GetLineNumber(int position, SyntaxTree syntaxTree)
+
+        private static int GetLineNumber(int position, SyntaxTree syntaxTree)
         {
             try
             {
@@ -295,7 +297,7 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 {
                     position = sourceText.Length;
                 }
-                
+
                 var linePosition = syntaxTree.GetLineSpan(new TextSpan(position, 0)).StartLinePosition;
                 return linePosition.Line + 1; // Line numbers are 0-based in Roslyn
             }
@@ -305,18 +307,18 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
                 return 1; // Default to line 1 if there's an error
             }
         }
-        
-        private string ExtractDocumentation(SyntaxNode node)
+
+        private static string ExtractDocumentation(SyntaxNode node)
         {
             var trivia = node.GetLeadingTrivia();
-            var docComments = trivia.Where(t => t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || 
+            var docComments = trivia.Where(t => t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
                                                t.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
-            
+
             if (!docComments.Any())
             {
                 return string.Empty;
             }
-            
+
             return string.Join(Environment.NewLine, docComments.Select(t => t.ToString()));
         }
     }

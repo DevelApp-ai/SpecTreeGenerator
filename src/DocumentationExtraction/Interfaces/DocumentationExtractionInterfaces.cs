@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
 
 namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
@@ -17,7 +18,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
         /// </summary>
         Task<IEnumerable<string>> ConvertToMarkdownAsync(IEnumerable<string> documentationFiles);
     }
-    
+
     /// <summary>
     /// Interface for markdown parsers
     /// </summary>
@@ -28,7 +29,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
         /// </summary>
         Task<IEnumerable<DocumentationSection>> ParseMarkdownAsync(IEnumerable<string> markdownFiles);
     }
-    
+
     /// <summary>
     /// Interface for structure analyzers
     /// </summary>
@@ -39,7 +40,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
         /// </summary>
         Task<DocumentationStructure> AnalyzeStructureAsync(IEnumerable<DocumentationSection> sections);
     }
-    
+
     /// <summary>
     /// Interface for semantic extractors
     /// </summary>
@@ -48,9 +49,9 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
         /// <summary>
         /// Extracts semantic information from documentation
         /// </summary>
-        Task<IEnumerable<SemanticComponent>> ExtractSemanticComponentsAsync(DocumentationStructure structure, CodeHierarchy codeHierarchy);
+        Task<IEnumerable<SemanticComponent>> ExtractSemanticComponentsAsync(DocumentationStructure documentStructure, CodeHierarchy codeHierarchy);
     }
-    
+
     /// <summary>
     /// Represents a section of documentation
     /// </summary>
@@ -63,7 +64,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
         public string SourceFile { get; set; } = string.Empty;
         public List<DocumentationSection> Subsections { get; set; } = new List<DocumentationSection>();
     }
-    
+
     /// <summary>
     /// Represents the structure of documentation
     /// </summary>
@@ -72,7 +73,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
         public List<DocumentationSection> RootSections { get; set; } = new List<DocumentationSection>();
         public Dictionary<string, DocumentationSection> SectionLookup { get; set; } = new Dictionary<string, DocumentationSection>();
     }
-    
+
     /// <summary>
     /// Represents a semantic component extracted from documentation
     /// </summary>

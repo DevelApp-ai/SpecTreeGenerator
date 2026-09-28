@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using GeneticSpecOptimizer.Common.Models;
 using GeneticSpecOptimizer.SourceConsolidation;
+
 using Xunit;
 
 namespace GeneticSpecOptimizer.SourceConsolidation.Tests;
@@ -148,9 +150,9 @@ public class SourceConsolidatorTests
         var result = consolidator.ConsolidateSources(codeAnalysis, docExtraction).ToList();
 
         var spec = Assert.Single(result);
-        var highIndex = spec.Content.IndexOf("High relevance note.");
-        var mediumIndex = spec.Content.IndexOf("Medium relevance note.");
-        var lowIndex = spec.Content.IndexOf("Low relevance note.");
+        var highIndex = spec.Content.IndexOf("High relevance note.", StringComparison.Ordinal);
+        var mediumIndex = spec.Content.IndexOf("Medium relevance note.", StringComparison.Ordinal);
+        var lowIndex = spec.Content.IndexOf("Low relevance note.", StringComparison.Ordinal);
 
         Assert.True(highIndex >= 0 && mediumIndex > highIndex && lowIndex > mediumIndex,
             "Snippets must be integrated in descending relevance order");
@@ -171,8 +173,8 @@ public class SourceConsolidatorTests
         Assert.EndsWith("\n", spec.Content);
         Assert.DoesNotContain("\n\n\n", spec.Content);
         // Documentation Notes must be the last section
-        var lastSectionIndex = spec.Content.LastIndexOf("\n## ");
-        var docNotesIndex = spec.Content.IndexOf("\n## Documentation Notes\n");
+        var lastSectionIndex = spec.Content.LastIndexOf("\n## ", StringComparison.Ordinal);
+        var docNotesIndex = spec.Content.IndexOf("\n## Documentation Notes\n", StringComparison.Ordinal);
         Assert.Equal(docNotesIndex, lastSectionIndex);
     }
 

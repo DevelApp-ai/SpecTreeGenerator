@@ -2,17 +2,22 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
 using GeneticSpecOptimizer.DocumentationExtraction.Converters;
 using GeneticSpecOptimizer.DocumentationExtraction.Extractors;
 using GeneticSpecOptimizer.DocumentationExtraction.Parsers;
+
 using Xunit;
 
 namespace GeneticSpecOptimizer.DocumentationExtraction.Tests;
 
 public class MarkdownParserTests
 {
-        private const string SampleMarkdown = @"# Title
+    private static readonly string[] ExpectedSectionTitles = { "Title", "Section One", "Subsection", "Section Two" };
+    private static readonly string[] ExpectedListItems = { "Item 1", "Item 2", "Item 3" };
+    private static readonly string[] ExpectedTableHeaders = { "Column A", "Column B" };
+    private const string SampleMarkdown = @"# Title
 
 Intro paragraph.
 
@@ -56,7 +61,7 @@ Subsection content.
         var document = parser.Parse(SampleMarkdown);
 
         var titles = document.Sections.Select(s => s.Title).ToList();
-        Assert.Equal(new[] { "Title", "Section One", "Subsection", "Section Two" }, titles);
+        Assert.Equal(ExpectedSectionTitles, titles);
         Assert.Equal(1, document.Sections[0].Level);
         Assert.Equal(2, document.Sections[1].Level);
         Assert.Equal(3, document.Sections[2].Level);
@@ -94,7 +99,7 @@ Subsection content.
 
         var list = Assert.Single(document.Lists);
         Assert.False(list.IsOrdered);
-        Assert.Equal(new[] { "Item 1", "Item 2", "Item 3" }, list.Items);
+        Assert.Equal(ExpectedListItems, list.Items);
     }
 
     [Fact]
@@ -104,7 +109,7 @@ Subsection content.
         var document = parser.Parse(SampleMarkdown);
 
         var table = Assert.Single(document.Tables);
-        Assert.Equal(new[] { "Column A", "Column B" }, table.Headers);
+        Assert.Equal(ExpectedTableHeaders, table.Headers);
         Assert.Equal(2, table.Rows.Count);
         Assert.Equal("a1", table.Rows[0][0]);
         Assert.Equal("b2", table.Rows[1][1]);
@@ -136,6 +141,7 @@ public class MarkitdownConverterTests : IDisposable
     public void Dispose()
     {
         Directory.Delete(_tempDir, recursive: true);
+        GC.SuppressFinalize(this);
     }
 
     [Fact]
