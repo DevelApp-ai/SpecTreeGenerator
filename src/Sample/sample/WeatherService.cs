@@ -86,7 +86,7 @@ namespace SampleProject
         /// <summary>
         /// The location this data is for
         /// </summary>
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
 
         /// <summary>
         /// The temperature in Celsius
@@ -101,7 +101,7 @@ namespace SampleProject
         /// <summary>
         /// The weather condition
         /// </summary>
-        public string Condition { get; set; }
+        public string Condition { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -112,12 +112,12 @@ namespace SampleProject
         /// <summary>
         /// The location this forecast is for
         /// </summary>
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
 
         /// <summary>
         /// The daily forecasts
         /// </summary>
-        public DailyForecast[] DailyForecasts { get; set; }
+        public DailyForecast[] DailyForecasts { get; set; } = Array.Empty<DailyForecast>();
     }
 
     /// <summary>
@@ -143,6 +143,6 @@ namespace SampleProject
         /// <summary>
         /// The weather condition
         /// </summary>
-        public string Condition { get; set; }
+        public string Condition { get; set; } = string.Empty;
     }
 }

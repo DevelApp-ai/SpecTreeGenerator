@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
 using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
 using GeneticSpecOptimizer.GeneticAlgorithm.Fitness;
 using GeneticSpecOptimizer.GeneticAlgorithm.Models;
 using GeneticSpecOptimizer.GeneticAlgorithm.Operators;
+
 using Xunit;
 
 namespace GeneticSpecOptimizer.GeneticAlgorithm.Tests;
@@ -144,7 +146,9 @@ public class FitnessEvaluatorTests
         var genome = new SpecificationGenome();
         genome.SpecificationFiles.Add(new SpecificationFile
         {
-            Id = "spec-0", Name = "Root", Content = "# Root\n\n## Overview\n\nRoot content.\n"
+            Id = "spec-0",
+            Name = "Root",
+            Content = "# Root\n\n## Overview\n\nRoot content.\n"
         });
         return genome;
     }
@@ -170,11 +174,15 @@ public class FitnessEvaluatorTests
         var plain = new SpecificationGenome();
         plain.SpecificationFiles.Add(new SpecificationFile
         {
-            Id = "spec-0", Name = "A", Content = "# A\n\nShared section content.\n"
+            Id = "spec-0",
+            Name = "A",
+            Content = "# A\n\nShared section content.\n"
         });
         plain.SpecificationFiles.Add(new SpecificationFile
         {
-            Id = "spec-1", Name = "B", Content = "# B\n\nShared section content.\n"
+            Id = "spec-1",
+            Name = "B",
+            Content = "# B\n\nShared section content.\n"
         });
 
         var inherited = plain.Clone();

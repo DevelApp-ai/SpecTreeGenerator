@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using GeneticSpecOptimizer.Common.Models;
 
 namespace GeneticSpecOptimizer.SourceConsolidation
@@ -102,7 +103,7 @@ namespace GeneticSpecOptimizer.SourceConsolidation
             return consolidatedSpecs;
         }
 
-        private void IntegrateSnippet(SpecificationFile spec, DocumentationExtraction.Extractors.DocumentationSnippet snippet)
+        private static void IntegrateSnippet(SpecificationFile spec, DocumentationExtraction.Extractors.DocumentationSnippet snippet)
         {
             // Append or insert snippet content into the 'Documentation Notes' section.
             // Conflict priority is code-first: documentation only augments, never replaces.
@@ -115,7 +116,7 @@ namespace GeneticSpecOptimizer.SourceConsolidation
             spec.Content += $"\n* **Source:** {snippet.SourceDocument}\n* **Content:** {snippet.Content.Trim()}\n";
         }
 
-        private void RefineConsolidatedSpecs(List<SpecificationFile> specs)
+        private static void RefineConsolidatedSpecs(List<SpecificationFile> specs)
         {
             foreach (var spec in specs)
             {
@@ -130,10 +131,10 @@ namespace GeneticSpecOptimizer.SourceConsolidation
             }
         }
 
-        private void EnsureProperFormatting(SpecificationFile spec)
+        private static void EnsureProperFormatting(SpecificationFile spec)
         {
             // Ensure the content ends with a newline
-            if (!spec.Content.EndsWith("\n"))
+            if (!spec.Content.EndsWith('\n'))
             {
                 spec.Content += "\n";
             }
@@ -142,15 +143,15 @@ namespace GeneticSpecOptimizer.SourceConsolidation
             spec.Content = spec.Content.Replace("\n\n\n", "\n\n");
         }
 
-        private void RemoveDuplicateContent(SpecificationFile spec)
+        private static void RemoveDuplicateContent(SpecificationFile spec)
         {
             // Ensure there are no duplicate Documentation Notes sections
             // (a more sophisticated implementation would also detect near-duplicate
             // snippet content using semantic similarity)
             if (spec.Content.Contains("\n## Documentation Notes\n"))
             {
-                var firstIndex = spec.Content.IndexOf("\n## Documentation Notes\n");
-                var lastIndex = spec.Content.LastIndexOf("\n## Documentation Notes\n");
+                var firstIndex = spec.Content.IndexOf("\n## Documentation Notes\n", StringComparison.Ordinal);
+                var lastIndex = spec.Content.LastIndexOf("\n## Documentation Notes\n", StringComparison.Ordinal);
 
                 if (firstIndex != lastIndex)
                 {
@@ -160,17 +161,17 @@ namespace GeneticSpecOptimizer.SourceConsolidation
             }
         }
 
-        private void ReorderSections(SpecificationFile spec)
+        private static void ReorderSections(SpecificationFile spec)
         {
             // Ensure Documentation Notes is the last section
             if (spec.Content.Contains("\n## Documentation Notes\n"))
             {
-                var index = spec.Content.IndexOf("\n## Documentation Notes\n");
+                var index = spec.Content.IndexOf("\n## Documentation Notes\n", StringComparison.Ordinal);
                 var docNotes = spec.Content.Substring(index);
                 var restOfContent = spec.Content.Substring(0, index);
 
                 // Check if there are any sections after Documentation Notes
-                var nextSectionIndex = docNotes.IndexOf("\n## ", 20); // Skip the "## Documentation Notes" part
+                var nextSectionIndex = docNotes.IndexOf("\n## ", 20, StringComparison.Ordinal); // Skip the "## Documentation Notes" part
 
                 if (nextSectionIndex != -1)
                 {

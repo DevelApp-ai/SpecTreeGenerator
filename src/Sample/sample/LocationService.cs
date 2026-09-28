@@ -61,20 +61,20 @@ namespace SampleProject
         public static double CalculateDistance(Coordinates coords1, Coordinates coords2)
         {
             const double EarthRadiusKm = 6371.0;
-            
+
             var dLat = DegreesToRadians(coords2.Latitude - coords1.Latitude);
             var dLon = DegreesToRadians(coords2.Longitude - coords1.Longitude);
-            
+
             var lat1 = DegreesToRadians(coords1.Latitude);
             var lat2 = DegreesToRadians(coords2.Latitude);
-            
-            var a = Math.Sin(dLat/2) * Math.Sin(dLat/2) +
-                    Math.Sin(dLon/2) * Math.Sin(dLon/2) * Math.Cos(lat1) * Math.Cos(lat2);
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1-a));
-            
+
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2) * Math.Cos(lat1) * Math.Cos(lat2);
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
             return EarthRadiusKm * c;
         }
-        
+
         private static double DegreesToRadians(double degrees)
         {
             return degrees * Math.PI / 180.0;
