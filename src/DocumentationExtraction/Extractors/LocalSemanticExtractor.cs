@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
 
 namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
@@ -21,10 +22,10 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
 
         public Task<List<DocumentationSnippet>> ExtractRelevantSnippetsAsync(
             Parsers.ParsedMarkdownDocument document,
-            Analyzers.DocumentStructure structure,
+            Analyzers.DocumentStructure documentStructure,
             CodeHierarchy codeHierarchy)
         {
-            ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(documentStructure);
             ArgumentNullException.ThrowIfNull(codeHierarchy);
 
             var snippets = new List<DocumentationSnippet>();
@@ -35,7 +36,7 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
                 .Where(c => c.Tokens.Count > 0)
                 .ToList();
 
-            foreach (var section in structure.Sections)
+            foreach (var section in documentStructure.Sections)
             {
                 if (string.IsNullOrWhiteSpace(section.Content))
                 {
