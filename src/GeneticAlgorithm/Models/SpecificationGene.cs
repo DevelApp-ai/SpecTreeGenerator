@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+
 using GeneticSpecOptimizer.Common.Models;
 
 namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
@@ -27,37 +29,37 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
         /// Unique identifier for this section
         /// </summary>
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        
+
         /// <summary>
         /// Type of content section
         /// </summary>
         public ContentSectionType Type { get; set; }
-        
+
         /// <summary>
         /// Title of the section
         /// </summary>
         public string Title { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Content of the section
         /// </summary>
         public string Content { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Whether this section is inherited from a parent specification
         /// </summary>
         public bool IsInherited { get; set; }
-        
+
         /// <summary>
         /// Parent section ID (if inherited)
         /// </summary>
         public string ParentSectionId { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Additional metadata
         /// </summary>
         public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
-        
+
         /// <summary>
         /// Creates a deep clone of this content section
         /// </summary>
@@ -74,7 +76,7 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
                 Metadata = new Dictionary<string, object>(this.Metadata)
             };
         }
-        
+
         /// <summary>
         /// Returns a string representation of the content section
         /// </summary>
@@ -89,36 +91,37 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
     /// </summary>
     public class SpecificationGene
     {
+        private static readonly char[] NewLineChars = { '\r', '\n' };
         /// <summary>
         /// Unique identifier for this gene
         /// </summary>
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        
+
         /// <summary>
         /// Name of the specification
         /// </summary>
         public string Name { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Component ID this specification is for
         /// </summary>
         public string ComponentId { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Parent gene ID (if any)
         /// </summary>
         public string ParentGeneId { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Content sections in this specification
         /// </summary>
         public List<ContentSection> ContentSections { get; set; } = new List<ContentSection>();
-        
+
         /// <summary>
         /// Additional metadata
         /// </summary>
         public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
-        
+
         /// <summary>
         /// Creates a deep clone of this gene
         /// </summary>
@@ -132,15 +135,15 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
                 ParentGeneId = this.ParentGeneId,
                 Metadata = new Dictionary<string, object>(this.Metadata)
             };
-            
+
             foreach (var section in this.ContentSections)
             {
                 clone.ContentSections.Add(section.Clone());
             }
-            
+
             return clone;
         }
-        
+
         /// <summary>
         /// Converts this gene to a specification file
         /// </summary>
@@ -148,23 +151,23 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
         {
             // Combine all content sections into a single markdown document
             var content = new System.Text.StringBuilder();
-            
+
             foreach (var section in ContentSections.OrderBy(s => s.Type))
             {
                 if (section.Type == ContentSectionType.Header)
                 {
-                    content.AppendLine($"# {section.Title}");
+                    content.AppendLine(CultureInfo.InvariantCulture, $"# {section.Title}");
                 }
                 else
                 {
-                    content.AppendLine($"## {section.Title}");
+                    content.AppendLine(CultureInfo.InvariantCulture, $"## {section.Title}");
                 }
-                
+
                 content.AppendLine();
                 content.AppendLine(section.Content);
                 content.AppendLine();
             }
-            
+
             return new SpecificationFile
             {
                 Id = this.Id,
@@ -175,7 +178,7 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
                 Metadata = new Dictionary<string, object>(this.Metadata)
             };
         }
-        
+
         /// <summary>
         /// Creates a gene from a specification file
         /// </summary>
@@ -186,20 +189,20 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
                 Id = specFile.Id,
                 Name = specFile.Name,
                 ComponentId = specFile.ComponentId,
-                ParentGeneId = specFile.ParentSpecificationId,
+                ParentGeneId = specFile.ParentSpecificationId ?? string.Empty,
                 Metadata = new Dictionary<string, object>(specFile.Metadata)
             };
-            
+
             // Parse content into sections
             // This is a simplified implementation - a real implementation would use a proper markdown parser
-            var lines = specFile.Content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            
-            ContentSection currentSection = null;
+            var lines = specFile.Content.Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries);
+
+            ContentSection? currentSection = null;
             var contentBuilder = new System.Text.StringBuilder();
-            
+
             foreach (var line in lines)
             {
-                if (line.StartsWith("# "))
+                if (line.StartsWith("# ", StringComparison.Ordinal))
                 {
                     // If we have a current section, add it to the gene
                     if (currentSection != null)
@@ -208,7 +211,7 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
                         gene.ContentSections.Add(currentSection);
                         contentBuilder.Clear();
                     }
-                    
+
                     // Create a new header section
                     currentSection = new ContentSection
                     {
@@ -216,7 +219,7 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
                         Title = line.Substring(2).Trim()
                     };
                 }
-                else if (line.StartsWith("## "))
+                else if (line.StartsWith("## ", StringComparison.Ordinal))
                 {
                     // If we have a current section, add it to the gene
                     if (currentSection != null)
@@ -225,11 +228,11 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
                         gene.ContentSections.Add(currentSection);
                         contentBuilder.Clear();
                     }
-                    
+
                     // Create a new section based on the title
                     var title = line.Substring(3).Trim();
                     var type = DetermineContentType(title);
-                    
+
                     currentSection = new ContentSection
                     {
                         Type = type,
@@ -242,34 +245,34 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
                     contentBuilder.AppendLine(line);
                 }
             }
-            
+
             // Add the last section
             if (currentSection != null)
             {
                 currentSection.Content = contentBuilder.ToString().Trim();
                 gene.ContentSections.Add(currentSection);
             }
-            
+
             return gene;
         }
-        
+
         private static ContentSectionType DetermineContentType(string title)
         {
             if (title.Contains("Requirement", StringComparison.OrdinalIgnoreCase))
                 return ContentSectionType.Requirements;
-            
+
             if (title.Contains("Example", StringComparison.OrdinalIgnoreCase))
                 return ContentSectionType.Examples;
-            
+
             if (title.Contains("Note", StringComparison.OrdinalIgnoreCase))
                 return ContentSectionType.Notes;
-            
+
             if (title.Contains("Description", StringComparison.OrdinalIgnoreCase))
                 return ContentSectionType.Description;
-            
+
             return ContentSectionType.Custom;
         }
-        
+
         /// <summary>
         /// Returns a string representation of the gene
         /// </summary>

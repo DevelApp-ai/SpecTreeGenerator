@@ -1,4 +1,5 @@
 using System;
+
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.MistralAI;
 

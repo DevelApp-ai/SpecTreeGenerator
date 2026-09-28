@@ -12,22 +12,22 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
         /// Score for hierarchy optimization (higher is better)
         /// </summary>
         public double HierarchyOptimizationScore { get; set; }
-        
+
         /// <summary>
         /// Score for size optimization (higher is better)
         /// </summary>
         public double SizeOptimizationScore { get; set; }
-        
+
         /// <summary>
         /// Score for code alignment (higher is better)
         /// </summary>
         public double CodeAlignmentScore { get; set; }
-        
+
         /// <summary>
         /// Score for completeness (higher is better)
         /// </summary>
         public double CompletenessScore { get; set; }
-        
+
         /// <summary>
         /// Creates a new instance of fitness metrics
         /// </summary>
@@ -38,7 +38,7 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
             CodeAlignmentScore = 0;
             CompletenessScore = 0;
         }
-        
+
         /// <summary>
         /// Returns a string representation of the metrics
         /// </summary>
