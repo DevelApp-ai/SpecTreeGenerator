@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
 
 namespace GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis
 {
@@ -16,16 +18,16 @@ namespace GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis
     {
         private readonly Dictionary<string, ISymbol> _symbols = new Dictionary<string, ISymbol>();
         private readonly Dictionary<SyntaxNode, ISymbol> _nodeToSymbolMap = new Dictionary<SyntaxNode, ISymbol>();
-        private readonly Dictionary<ISymbol, string> _symbolToIdMap = new Dictionary<ISymbol, string>();
+        private readonly Dictionary<ISymbol, string> _symbolToIdMap = new Dictionary<ISymbol, string>(SymbolEqualityComparer.Default);
 
         /// <summary>
         /// Adds a symbol to the table
         /// </summary>
-        public void AddSymbol(string id, ISymbol symbol, SyntaxNode node = null)
+        public void AddSymbol(string id, ISymbol symbol, SyntaxNode? node = null)
         {
             _symbols[id] = symbol;
             _symbolToIdMap[symbol] = id;
-            
+
             if (node != null)
             {
                 _nodeToSymbolMap[node] = symbol;
@@ -35,7 +37,7 @@ namespace GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis
         /// <summary>
         /// Gets a symbol by its ID
         /// </summary>
-        public ISymbol GetSymbol(string id)
+        public ISymbol? GetSymbol(string id)
         {
             return _symbols.TryGetValue(id, out var symbol) ? symbol : null;
         }
@@ -43,7 +45,7 @@ namespace GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis
         /// <summary>
         /// Gets a symbol for a syntax node
         /// </summary>
-        public ISymbol GetSymbol(SyntaxNode node)
+        public ISymbol? GetSymbol(SyntaxNode node)
         {
             return _nodeToSymbolMap.TryGetValue(node, out var symbol) ? symbol : null;
         }
@@ -51,7 +53,7 @@ namespace GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis
         /// <summary>
         /// Gets the ID for a symbol
         /// </summary>
-        public string GetId(ISymbol symbol)
+        public string? GetId(ISymbol symbol)
         {
             return _symbolToIdMap.TryGetValue(symbol, out var id) ? id : null;
         }
@@ -65,7 +67,7 @@ namespace GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis
         /// <summary>
         /// Builds a symbol table from a syntax tree and compilation
         /// </summary>
-        public async Task<SymbolTable> BuildSymbolTableAsync(SyntaxTree syntaxTree, string filePath)
+        public static async Task<SymbolTable> BuildSymbolTableAsync(SyntaxTree syntaxTree, string filePath)
         {
             var compilation = CSharpCompilation.Create("SymbolAnalysis")
                 .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
@@ -81,7 +83,7 @@ namespace GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis
             return symbolTable;
         }
 
-        private void ProcessDeclarations(SyntaxNode node, SemanticModel semanticModel, SymbolTable symbolTable, string filePath)
+        private static void ProcessDeclarations(SyntaxNode node, SemanticModel semanticModel, SymbolTable symbolTable, string filePath)
         {
             // Process namespaces
             if (node is NamespaceDeclarationSyntax namespaceDecl)

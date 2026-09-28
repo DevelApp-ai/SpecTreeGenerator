@@ -221,7 +221,6 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Converters
             var builder = new StringBuilder();
 
             // Locate and decompress all FlateDecode streams
-            int streamStart;
             var offsets = new List<int>();
             for (int i = 0; i + 5 < bytes.Length; i++)
             {
