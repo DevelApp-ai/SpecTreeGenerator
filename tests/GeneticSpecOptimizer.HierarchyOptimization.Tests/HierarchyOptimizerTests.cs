@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GeneticSpecOptimizer.Common.Models;
 using GeneticSpecOptimizer.GeneticAlgorithm.Encoding;
 using GeneticSpecOptimizer.GeneticAlgorithm.Models;
 using GeneticSpecOptimizer.HierarchyOptimization;
+
 using Xunit;
 
 namespace GeneticSpecOptimizer.HierarchyOptimization.Tests;
