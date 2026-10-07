@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Pipeline\GeneticSpecOptimizer.Pipeline.csproj" />
+    <ProjectReference Include="..\Pipeline\SpecTreeGenerator.Pipeline.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

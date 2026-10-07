@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GeneticSpecOptimizer.Common.Models
+namespace SpecTreeGenerator.Common.Models
 {
     /// <summary>
     /// Configuration settings for the hierarchy optimizer

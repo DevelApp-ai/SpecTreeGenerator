@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\GeneticSpecOptimizer.Common.csproj" />
+    <ProjectReference Include="..\Common\SpecTreeGenerator.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

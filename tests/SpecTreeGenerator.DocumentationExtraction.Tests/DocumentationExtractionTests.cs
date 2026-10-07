@@ -3,14 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.DocumentationExtraction.Converters;
-using GeneticSpecOptimizer.DocumentationExtraction.Extractors;
-using GeneticSpecOptimizer.DocumentationExtraction.Parsers;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.DocumentationExtraction.Converters;
+using SpecTreeGenerator.DocumentationExtraction.Extractors;
+using SpecTreeGenerator.DocumentationExtraction.Parsers;
 
 using Xunit;
 
-namespace GeneticSpecOptimizer.DocumentationExtraction.Tests;
+namespace SpecTreeGenerator.DocumentationExtraction.Tests;
 
 public class MarkdownParserTests
 {

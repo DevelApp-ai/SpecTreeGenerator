@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\SpecTreeGenerator.Common.csproj" />
+    <ProjectReference Include="..\CodeAnalysis\SpecTreeGenerator.CodeAnalysis.csproj" />
+    <ProjectReference Include="..\DocumentationExtraction\SpecTreeGenerator.DocumentationExtraction.csproj" />
+    <ProjectReference Include="..\GeneticAlgorithm\SpecTreeGenerator.GeneticAlgorithm.csproj" />
+    <ProjectReference Include="..\HierarchyOptimization\SpecTreeGenerator.HierarchyOptimization.csproj" />
+    <ProjectReference Include="..\SourceConsolidation\SpecTreeGenerator.SourceConsolidation.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- The MistralAI connector for Semantic Kernel is published as an experimental
+         package (1.54.0-alpha); this is the intended, documented way to consume it. -->
+    <NoWarn>$(NoWarn);SKEXP0070</NoWarn>
+  </PropertyGroup>
+
+</Project>

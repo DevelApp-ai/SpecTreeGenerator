@@ -1,10 +1,10 @@
-# GeneticSpecOptimizer Installation Guide
+# SpecTreeGenerator Installation Guide
 
-This document provides instructions for installing and setting up the GeneticSpecOptimizer system.
+This document provides instructions for installing and setting up the SpecTreeGenerator system.
 
 ## Prerequisites
 
-Before installing GeneticSpecOptimizer, ensure you have the following prerequisites:
+Before installing SpecTreeGenerator, ensure you have the following prerequisites:
 
 - **.NET 8 SDK** or later
 - **Git** (optional, for cloning the repository)
@@ -61,14 +61,14 @@ This will execute a sample optimization pipeline on a small test project.
 
 ## Project Structure
 
-The GeneticSpecOptimizer solution is organized into the following projects:
+The SpecTreeGenerator solution is organized into the following projects:
 
-- **GeneticSpecOptimizer.Common**: Common models and utilities
-- **GeneticSpecOptimizer.CodeAnalysis**: Code analysis components
-- **GeneticSpecOptimizer.DocumentationExtraction**: Documentation extraction components
-- **GeneticSpecOptimizer.GeneticAlgorithm**: Genetic algorithm implementation
-- **GeneticSpecOptimizer.HierarchyOptimization**: Hierarchy optimization components
-- **GeneticSpecOptimizer.Pipeline**: Main pipeline implementation
+- **SpecTreeGenerator.Common**: Common models and utilities
+- **SpecTreeGenerator.CodeAnalysis**: Code analysis components
+- **SpecTreeGenerator.DocumentationExtraction**: Documentation extraction components
+- **SpecTreeGenerator.GeneticAlgorithm**: Genetic algorithm implementation
+- **SpecTreeGenerator.HierarchyOptimization**: Hierarchy optimization components
+- **SpecTreeGenerator.Pipeline**: Main pipeline implementation
 - **Sample**: Sample application demonstrating usage
 
 ## Troubleshooting
@@ -97,4 +97,4 @@ If you encounter runtime errors:
 
 ## Next Steps
 
-After installation, refer to the [Usage Guide](usage.md) for instructions on how to use the GeneticSpecOptimizer system.
+After installation, refer to the [Usage Guide](usage.md) for instructions on how to use the SpecTreeGenerator system.

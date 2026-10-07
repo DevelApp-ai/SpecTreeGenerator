@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
-using GeneticSpecOptimizer.GeneticAlgorithm.Fitness;
-using GeneticSpecOptimizer.GeneticAlgorithm.Models;
-using GeneticSpecOptimizer.GeneticAlgorithm.Operators;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.GeneticAlgorithm.Evolution;
+using SpecTreeGenerator.GeneticAlgorithm.Fitness;
+using SpecTreeGenerator.GeneticAlgorithm.Models;
+using SpecTreeGenerator.GeneticAlgorithm.Operators;
 
 using Xunit;
 
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Tests;
+namespace SpecTreeGenerator.GeneticAlgorithm.Tests;
 
 public class GeneticOperatorsTests
 {

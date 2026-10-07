@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.GeneticAlgorithm.Models;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.GeneticAlgorithm.Models;
 
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Encoding
+namespace SpecTreeGenerator.GeneticAlgorithm.Encoding
 {
     /// <summary>
     /// Implementation of the specification genome encoder

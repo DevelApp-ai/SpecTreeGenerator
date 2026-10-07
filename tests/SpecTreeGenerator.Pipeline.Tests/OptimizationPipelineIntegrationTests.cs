@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Pipeline;
+using SpecTreeGenerator.Pipeline;
 
 using Xunit;
 
-namespace GeneticSpecOptimizer.Pipeline.Tests;
+namespace SpecTreeGenerator.Pipeline.Tests;
 
 /// <summary>
 /// End-to-end integration tests for <see cref="OptimizationPipeline"/> using the

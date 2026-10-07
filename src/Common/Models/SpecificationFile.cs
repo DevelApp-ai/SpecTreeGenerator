@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeneticSpecOptimizer.Common.Models
+namespace SpecTreeGenerator.Common.Models
 {
     /// <summary>
     /// Represents a specification file

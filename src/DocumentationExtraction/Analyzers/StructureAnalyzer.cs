@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
-namespace GeneticSpecOptimizer.DocumentationExtraction.Analyzers
+namespace SpecTreeGenerator.DocumentationExtraction.Analyzers
 {
     /// <summary>
     /// Represents the structure of a document

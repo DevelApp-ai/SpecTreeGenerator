@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
-namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
+namespace SpecTreeGenerator.DocumentationExtraction.Extractors
 {
     /// <summary>
     /// Local, non-AI implementation of the semantic extraction service.

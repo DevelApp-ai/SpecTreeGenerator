@@ -5,33 +5,33 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F3A01462-F831-4C8A-A3A7-D70B5ED2B2B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.CodeAnalysis", "src\CodeAnalysis\GeneticSpecOptimizer.CodeAnalysis.csproj", "{C087429F-CAFA-4754-BFBC-E9C00D4FFE3E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.CodeAnalysis", "src\CodeAnalysis\SpecTreeGenerator.CodeAnalysis.csproj", "{C087429F-CAFA-4754-BFBC-E9C00D4FFE3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.Common", "src\Common\GeneticSpecOptimizer.Common.csproj", "{34DE4BF5-1971-4FEC-9672-88F4E5DA4167}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.Common", "src\Common\SpecTreeGenerator.Common.csproj", "{34DE4BF5-1971-4FEC-9672-88F4E5DA4167}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.DocumentationExtraction", "src\DocumentationExtraction\GeneticSpecOptimizer.DocumentationExtraction.csproj", "{32EE4B24-5D5D-4835-83DC-8E0B778DCB62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.DocumentationExtraction", "src\DocumentationExtraction\SpecTreeGenerator.DocumentationExtraction.csproj", "{32EE4B24-5D5D-4835-83DC-8E0B778DCB62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.GeneticAlgorithm", "src\GeneticAlgorithm\GeneticSpecOptimizer.GeneticAlgorithm.csproj", "{0A5EBB3A-5E38-49B0-B2C1-04A610D058D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.GeneticAlgorithm", "src\GeneticAlgorithm\SpecTreeGenerator.GeneticAlgorithm.csproj", "{0A5EBB3A-5E38-49B0-B2C1-04A610D058D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.HierarchyOptimization", "src\HierarchyOptimization\GeneticSpecOptimizer.HierarchyOptimization.csproj", "{4F8A9C11-B404-448E-8240-318BD85AE289}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.HierarchyOptimization", "src\HierarchyOptimization\SpecTreeGenerator.HierarchyOptimization.csproj", "{4F8A9C11-B404-448E-8240-318BD85AE289}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.Pipeline", "src\Pipeline\GeneticSpecOptimizer.Pipeline.csproj", "{FC8C31A9-098C-4155-BEF6-1C6F2A317FB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.Pipeline", "src\Pipeline\SpecTreeGenerator.Pipeline.csproj", "{FC8C31A9-098C-4155-BEF6-1C6F2A317FB2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "src\Sample\Sample.csproj", "{08EC20FE-C2B1-427D-912D-33A74B16B44C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.SourceConsolidation", "src\SourceConsolidation\GeneticSpecOptimizer.SourceConsolidation.csproj", "{095FCE20-D367-46D8-9D52-1339011575CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.SourceConsolidation", "src\SourceConsolidation\SpecTreeGenerator.SourceConsolidation.csproj", "{095FCE20-D367-46D8-9D52-1339011575CF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{58C95572-D973-4C9C-8DF9-56C1866B36F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.DocumentationExtraction.Tests", "tests\GeneticSpecOptimizer.DocumentationExtraction.Tests\GeneticSpecOptimizer.DocumentationExtraction.Tests.csproj", "{EFBC265B-4772-4FBC-85D4-DF478E9EBD7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.DocumentationExtraction.Tests", "tests\SpecTreeGenerator.DocumentationExtraction.Tests\SpecTreeGenerator.DocumentationExtraction.Tests.csproj", "{EFBC265B-4772-4FBC-85D4-DF478E9EBD7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.HierarchyOptimization.Tests", "tests\GeneticSpecOptimizer.HierarchyOptimization.Tests\GeneticSpecOptimizer.HierarchyOptimization.Tests.csproj", "{3EB3E376-765B-4350-AB45-05887ABD0BE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.HierarchyOptimization.Tests", "tests\SpecTreeGenerator.HierarchyOptimization.Tests\SpecTreeGenerator.HierarchyOptimization.Tests.csproj", "{3EB3E376-765B-4350-AB45-05887ABD0BE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.Pipeline.Tests", "tests\GeneticSpecOptimizer.Pipeline.Tests\GeneticSpecOptimizer.Pipeline.Tests.csproj", "{D8B9B5BF-C745-4901-921A-50082EDEC7CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.Pipeline.Tests", "tests\SpecTreeGenerator.Pipeline.Tests\SpecTreeGenerator.Pipeline.Tests.csproj", "{D8B9B5BF-C745-4901-921A-50082EDEC7CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.SourceConsolidation.Tests", "tests\GeneticSpecOptimizer.SourceConsolidation.Tests\GeneticSpecOptimizer.SourceConsolidation.Tests.csproj", "{32D0CC00-2861-4B7F-8FBB-979699ACA084}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.SourceConsolidation.Tests", "tests\SpecTreeGenerator.SourceConsolidation.Tests\SpecTreeGenerator.SourceConsolidation.Tests.csproj", "{32D0CC00-2861-4B7F-8FBB-979699ACA084}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneticSpecOptimizer.GeneticAlgorithm.Tests", "tests\GeneticSpecOptimizer.GeneticAlgorithm.Tests\GeneticSpecOptimizer.GeneticAlgorithm.Tests.csproj", "{251BC71B-7BA8-4706-9224-5120C9D39987}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.GeneticAlgorithm.Tests", "tests\SpecTreeGenerator.GeneticAlgorithm.Tests\SpecTreeGenerator.GeneticAlgorithm.Tests.csproj", "{251BC71B-7BA8-4706-9224-5120C9D39987}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -17,7 +17,7 @@ The system uses a hierarchical approach to optimize specification files by pushi
 The `CodeComponent` class represents a discrete unit of code (class, method, property, etc.) extracted from source code.
 
 ```csharp
-namespace GeneticSpecOptimizer.Common.Models
+namespace SpecTreeGenerator.Common.Models
 {
     /// <summary>
     /// Type of code component
@@ -152,7 +152,7 @@ namespace GeneticSpecOptimizer.Common.Models
 The `CodeRelationship` class represents a relationship between two code components, such as inheritance, implementation, or dependency.
 
 ```csharp
-namespace GeneticSpecOptimizer.Common.Models
+namespace SpecTreeGenerator.Common.Models
 {
     /// <summary>
     /// Type of relationship between components
@@ -229,7 +229,7 @@ namespace GeneticSpecOptimizer.Common.Models
 The `HierarchyNode` and `CodeHierarchy` classes represent a hierarchical structure of code components.
 
 ```csharp
-namespace GeneticSpecOptimizer.Common.Models
+namespace SpecTreeGenerator.Common.Models
 {
     /// <summary>
     /// Represents a node in a code hierarchy
@@ -504,7 +504,7 @@ namespace GeneticSpecOptimizer.Common.Models
 The `SpecificationFile` class represents a specification file that will be generated or optimized.
 
 ```csharp
-namespace GeneticSpecOptimizer.Common.Models
+namespace SpecTreeGenerator.Common.Models
 {
     /// <summary>
     /// Represents a specification file
@@ -579,7 +579,7 @@ namespace GeneticSpecOptimizer.Common.Models
 The `TextSpan` class represents a span of text in a source file.
 
 ```csharp
-namespace GeneticSpecOptimizer.Common.Models
+namespace SpecTreeGenerator.Common.Models
 {
     /// <summary>
     /// Represents a text span in a source file
@@ -644,9 +644,9 @@ namespace GeneticSpecOptimizer.Common.Models
 The `SpecificationGenome` class represents a genome in the genetic algorithm, encoding a specific hierarchy of specifications.
 
 ```csharp
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
+namespace SpecTreeGenerator.GeneticAlgorithm.Models
 {
-    using GeneticSpecOptimizer.Common.Models;
+    using SpecTreeGenerator.Common.Models;
     
     /// <summary>
     /// Represents a genome in the genetic algorithm
@@ -721,7 +721,7 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
 The `EvolutionResult` class represents the result of running the genetic algorithm.
 
 ```csharp
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
+namespace SpecTreeGenerator.GeneticAlgorithm.Models
 {
     /// <summary>
     /// Represents the result of running the genetic algorithm
@@ -779,7 +779,7 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
 The `FitnessMetrics` class represents metrics used to evaluate the fitness of a genome.
 
 ```csharp
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
+namespace SpecTreeGenerator.GeneticAlgorithm.Models
 {
     /// <summary>
     /// Represents metrics used to evaluate the fitness of a genome
@@ -834,7 +834,7 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
 The `EvolutionConfig` class represents configuration settings for the genetic algorithm.
 
 ```csharp
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Evolution
+namespace SpecTreeGenerator.GeneticAlgorithm.Evolution
 {
     /// <summary>
     /// Configuration settings for the genetic algorithm
@@ -899,9 +899,9 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Evolution
 The `HierarchyOptimizerConfig` class represents configuration settings for the hierarchy optimizer.
 
 ```csharp
-namespace GeneticSpecOptimizer.HierarchyOptimization
+namespace SpecTreeGenerator.HierarchyOptimization
 {
-    using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
+    using SpecTreeGenerator.GeneticAlgorithm.Evolution;
     
     /// <summary>
     /// Configuration settings for the hierarchy optimizer
@@ -956,9 +956,9 @@ namespace GeneticSpecOptimizer.HierarchyOptimization
 The `OptimizationPipelineConfig` class represents configuration settings for the optimization pipeline.
 
 ```csharp
-namespace GeneticSpecOptimizer.Pipeline
+namespace SpecTreeGenerator.Pipeline
 {
-    using GeneticSpecOptimizer.HierarchyOptimization;
+    using SpecTreeGenerator.HierarchyOptimization;
     
     /// <summary>
     /// Configuration settings for the optimization pipeline
@@ -1018,9 +1018,9 @@ namespace GeneticSpecOptimizer.Pipeline
 The `OptimizationResult` class represents the result of running the optimization pipeline.
 
 ```csharp
-namespace GeneticSpecOptimizer.Pipeline
+namespace SpecTreeGenerator.Pipeline
 {
-    using GeneticSpecOptimizer.GeneticAlgorithm.Models;
+    using SpecTreeGenerator.GeneticAlgorithm.Models;
     
     /// <summary>
     /// Represents the result of running the optimization pipeline
@@ -1111,9 +1111,9 @@ namespace GeneticSpecOptimizer.Pipeline
 ### 5.1 Code Analysis Interfaces
 
 ```csharp
-namespace GeneticSpecOptimizer.CodeAnalysis.Interfaces
+namespace SpecTreeGenerator.CodeAnalysis.Interfaces
 {
-    using GeneticSpecOptimizer.Common.Models;
+    using SpecTreeGenerator.Common.Models;
     using Microsoft.CodeAnalysis;
     
     /// <summary>
@@ -1192,9 +1192,9 @@ namespace GeneticSpecOptimizer.CodeAnalysis.Interfaces
 ### 5.2 Documentation Extraction Interfaces
 
 ```csharp
-namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
+namespace SpecTreeGenerator.DocumentationExtraction.Interfaces
 {
-    using GeneticSpecOptimizer.Common.Models;
+    using SpecTreeGenerator.Common.Models;
     
     /// <summary>
     /// Interface for documentation converters
@@ -1280,11 +1280,11 @@ namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
 ### 5.3 Genetic Algorithm Interfaces
 
 ```csharp
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Interfaces
+namespace SpecTreeGenerator.GeneticAlgorithm.Interfaces
 {
-    using GeneticSpecOptimizer.Common.Models;
-    using GeneticSpecOptimizer.GeneticAlgorithm.Models;
-    using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
+    using SpecTreeGenerator.Common.Models;
+    using SpecTreeGenerator.GeneticAlgorithm.Models;
+    using SpecTreeGenerator.GeneticAlgorithm.Evolution;
     
     /// <summary>
     /// Interface for specification genome encoders
@@ -1371,10 +1371,10 @@ namespace GeneticSpecOptimizer.GeneticAlgorithm.Interfaces
 ### 5.4 Hierarchy Optimization Interfaces
 
 ```csharp
-namespace GeneticSpecOptimizer.HierarchyOptimization.Interfaces
+namespace SpecTreeGenerator.HierarchyOptimization.Interfaces
 {
-    using GeneticSpecOptimizer.Common.Models;
-    using GeneticSpecOptimizer.GeneticAlgorithm.Models;
+    using SpecTreeGenerator.Common.Models;
+    using SpecTreeGenerator.GeneticAlgorithm.Models;
     
     /// <summary>
     /// Interface for hierarchy optimizers
@@ -1480,9 +1480,9 @@ namespace GeneticSpecOptimizer.HierarchyOptimization.Interfaces
 ### 5.5 Pipeline Interfaces
 
 ```csharp
-namespace GeneticSpecOptimizer.Pipeline.Interfaces
+namespace SpecTreeGenerator.Pipeline.Interfaces
 {
-    using GeneticSpecOptimizer.Common.Models;
+    using SpecTreeGenerator.Common.Models;
     
     /// <summary>
     /// Interface for the optimization pipeline

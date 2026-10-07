@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
-namespace GeneticSpecOptimizer.SourceConsolidation
+namespace SpecTreeGenerator.SourceConsolidation
 {
     /// <summary>
     /// Result of the code analysis stage. Single source of truth for this contract;

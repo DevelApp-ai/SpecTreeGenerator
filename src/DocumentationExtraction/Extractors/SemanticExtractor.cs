@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
 using Microsoft.SemanticKernel;
 
-namespace GeneticSpecOptimizer.DocumentationExtraction.Extractors
+namespace SpecTreeGenerator.DocumentationExtraction.Extractors
 {
     /// <summary>
     /// Represents a documentation snippet extracted from a document

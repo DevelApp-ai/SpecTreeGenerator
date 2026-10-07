@@ -1,8 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\Common\GeneticSpecOptimizer.Common.csproj" />
-    <ProjectReference Include="..\GeneticAlgorithm\GeneticSpecOptimizer.GeneticAlgorithm.csproj" />
-  </ItemGroup>
-
-</Project>

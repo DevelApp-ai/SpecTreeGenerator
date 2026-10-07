@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
+namespace SpecTreeGenerator.GeneticAlgorithm.Models
 {
     /// <summary>
     /// Represents fitness metrics for a specification genome

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.GeneticAlgorithm.Encoding;
-using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
-using GeneticSpecOptimizer.GeneticAlgorithm.Fitness;
-using GeneticSpecOptimizer.GeneticAlgorithm.Interfaces;
-using GeneticSpecOptimizer.GeneticAlgorithm.Models;
-using GeneticSpecOptimizer.GeneticAlgorithm.Operators;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.GeneticAlgorithm.Encoding;
+using SpecTreeGenerator.GeneticAlgorithm.Evolution;
+using SpecTreeGenerator.GeneticAlgorithm.Fitness;
+using SpecTreeGenerator.GeneticAlgorithm.Interfaces;
+using SpecTreeGenerator.GeneticAlgorithm.Models;
+using SpecTreeGenerator.GeneticAlgorithm.Operators;
 
-namespace GeneticSpecOptimizer.HierarchyOptimization
+namespace SpecTreeGenerator.HierarchyOptimization
 {
     // HierarchyOptimizerConfig has been moved to Common/Models/OptimizerConfigs.cs
 

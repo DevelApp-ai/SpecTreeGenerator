@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.GeneticAlgorithm.Encoding;
-using GeneticSpecOptimizer.GeneticAlgorithm.Models;
-using GeneticSpecOptimizer.HierarchyOptimization;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.GeneticAlgorithm.Encoding;
+using SpecTreeGenerator.GeneticAlgorithm.Models;
+using SpecTreeGenerator.HierarchyOptimization;
 
 using Xunit;
 
-namespace GeneticSpecOptimizer.HierarchyOptimization.Tests;
+namespace SpecTreeGenerator.HierarchyOptimization.Tests;
 
 public class HierarchyOptimizerTests
 {

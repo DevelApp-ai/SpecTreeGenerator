@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
-namespace GeneticSpecOptimizer.DocumentationExtraction.Parsers
+namespace SpecTreeGenerator.DocumentationExtraction.Parsers
 {
     /// <summary>
     /// Represents a parsed Markdown document

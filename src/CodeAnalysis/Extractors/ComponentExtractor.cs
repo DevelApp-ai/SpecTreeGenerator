@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace GeneticSpecOptimizer.CodeAnalysis.Extractors
+namespace SpecTreeGenerator.CodeAnalysis.Extractors
 {
     /// <summary>
     /// Extracts code components from a syntax tree

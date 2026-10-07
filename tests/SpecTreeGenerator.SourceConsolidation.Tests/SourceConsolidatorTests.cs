@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.SourceConsolidation;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.SourceConsolidation;
 
 using Xunit;
 
-namespace GeneticSpecOptimizer.SourceConsolidation.Tests;
+namespace SpecTreeGenerator.SourceConsolidation.Tests;
 
 public class SourceConsolidatorTests
 {

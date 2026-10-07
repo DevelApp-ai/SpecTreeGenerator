@@ -23,13 +23,13 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore
-        run: dotnet restore GeneticSpecOptimizer.sln
+        run: dotnet restore SpecTreeGenerator.sln
 
       - name: Build (warnings as errors)
-        run: dotnet build GeneticSpecOptimizer.sln -c Release --no-restore /warnaserror
+        run: dotnet build SpecTreeGenerator.sln -c Release --no-restore /warnaserror
 
       - name: Test
-        run: dotnet test GeneticSpecOptimizer.sln -c Release --no-build
+        run: dotnet test SpecTreeGenerator.sln -c Release --no-build
 
       - name: Verify formatting
-        run: dotnet format GeneticSpecOptimizer.sln --verify-no-changes
+        run: dotnet format SpecTreeGenerator.sln --verify-no-changes

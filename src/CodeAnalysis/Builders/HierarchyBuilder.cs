@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
-namespace GeneticSpecOptimizer.CodeAnalysis.Builders
+namespace SpecTreeGenerator.CodeAnalysis.Builders
 {
     /// <summary>
     /// Builds a code hierarchy from extracted components

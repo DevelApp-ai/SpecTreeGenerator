@@ -3,7 +3,7 @@ using System;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.MistralAI;
 
-namespace GeneticSpecOptimizer.Pipeline
+namespace SpecTreeGenerator.Pipeline
 {
     /// <summary>
     /// Describes which AI backend the pipeline will use.
