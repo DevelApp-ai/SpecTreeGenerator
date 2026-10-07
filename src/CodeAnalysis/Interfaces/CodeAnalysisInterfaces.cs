@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using SpecTreeGenerator.Common.Models;
-
 using Microsoft.CodeAnalysis;
 
+using SpecTreeGenerator.Common.Models;
 namespace SpecTreeGenerator.CodeAnalysis.Interfaces
 {
     /// <summary>

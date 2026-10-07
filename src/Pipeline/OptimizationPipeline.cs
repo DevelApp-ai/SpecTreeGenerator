@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.SemanticKernel;
+
 using SpecTreeGenerator.CodeAnalysis.Analyzers;
 using SpecTreeGenerator.CodeAnalysis.Builders;
 using SpecTreeGenerator.CodeAnalysis.Extractors;
@@ -21,9 +23,6 @@ using SpecTreeGenerator.GeneticAlgorithm.Evolution;
 using SpecTreeGenerator.GeneticAlgorithm.Fitness;
 using SpecTreeGenerator.HierarchyOptimization;
 using SpecTreeGenerator.SourceConsolidation;
-
-using Microsoft.SemanticKernel;
-
 namespace SpecTreeGenerator.Pipeline
 {
     /// <summary>

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-using SpecTreeGenerator.Common.Models;
-
 using Microsoft.SemanticKernel;
 
+using SpecTreeGenerator.Common.Models;
 namespace SpecTreeGenerator.DocumentationExtraction.Extractors
 {
     /// <summary>

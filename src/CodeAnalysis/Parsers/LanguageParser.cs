@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using SpecTreeGenerator.Common.Models;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+using SpecTreeGenerator.Common.Models;
 namespace SpecTreeGenerator.CodeAnalysis.Parsers
 {
     /// <summary>
