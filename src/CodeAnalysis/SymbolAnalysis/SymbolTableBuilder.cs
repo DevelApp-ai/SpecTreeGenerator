@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis
+using SpecTreeGenerator.Common.Models;
+namespace SpecTreeGenerator.CodeAnalysis.SymbolAnalysis
 {
     /// <summary>
     /// Represents a symbol table for resolving references and understanding types

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.GeneticAlgorithm.Interfaces;
-using GeneticSpecOptimizer.GeneticAlgorithm.Models;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.GeneticAlgorithm.Interfaces;
+using SpecTreeGenerator.GeneticAlgorithm.Models;
 
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Fitness
+namespace SpecTreeGenerator.GeneticAlgorithm.Fitness
 {
     /// <summary>
     /// Implementation of the fitness evaluator

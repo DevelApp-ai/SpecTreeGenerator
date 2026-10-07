@@ -1,10 +1,10 @@
-# GeneticSpecOptimizer Architecture Overview
+# SpecTreeGenerator Architecture Overview
 
-This document provides an overview of the GeneticSpecOptimizer system architecture, explaining how the different components work together to optimize specifications using genetic algorithms.
+This document provides an overview of the SpecTreeGenerator system architecture, explaining how the different components work together to optimize specifications using genetic algorithms.
 
 ## System Architecture
 
-The GeneticSpecOptimizer system is composed of several interconnected components that work together to analyze code, extract documentation, and optimize specifications using genetic algorithms.
+The SpecTreeGenerator system is composed of several interconnected components that work together to analyze code, extract documentation, and optimize specifications using genetic algorithms.
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -32,7 +32,7 @@ The GeneticSpecOptimizer system is composed of several interconnected components
 
 ### Common Models
 
-The `GeneticSpecOptimizer.Common` project contains shared models used throughout the system:
+The `SpecTreeGenerator.Common` project contains shared models used throughout the system:
 
 - `CodeComponent`: Represents a component in the code (class, method, property, etc.)
 - `CodeRelationship`: Represents a relationship between components
@@ -42,7 +42,7 @@ The `GeneticSpecOptimizer.Common` project contains shared models used throughout
 
 ### Code Analysis
 
-The `GeneticSpecOptimizer.CodeAnalysis` project is responsible for analyzing source code:
+The `SpecTreeGenerator.CodeAnalysis` project is responsible for analyzing source code:
 
 - `LanguageParser`: Parses source code files
 - `SymbolTableBuilder`: Builds a symbol table from parsed code
@@ -53,7 +53,7 @@ The `GeneticSpecOptimizer.CodeAnalysis` project is responsible for analyzing sou
 
 ### Documentation Extraction
 
-The `GeneticSpecOptimizer.DocumentationExtraction` project extracts information from documentation:
+The `SpecTreeGenerator.DocumentationExtraction` project extracts information from documentation:
 
 - `MarkitdownConverter`: Converts various document formats to Markdown
 - `MarkdownParser`: Parses Markdown documents
@@ -62,7 +62,7 @@ The `GeneticSpecOptimizer.DocumentationExtraction` project extracts information 
 
 ### Genetic Algorithm
 
-The `GeneticSpecOptimizer.GeneticAlgorithm` project implements the genetic algorithm:
+The `SpecTreeGenerator.GeneticAlgorithm` project implements the genetic algorithm:
 
 - `SpecificationGenomeEncoder`: Encodes specifications as genomes
 - `GeneticOperators`: Implements genetic operators (mutation, crossover)
@@ -71,14 +71,14 @@ The `GeneticSpecOptimizer.GeneticAlgorithm` project implements the genetic algor
 
 ### Hierarchy Optimization
 
-The `GeneticSpecOptimizer.HierarchyOptimization` project optimizes the specification hierarchy:
+The `SpecTreeGenerator.HierarchyOptimization` project optimizes the specification hierarchy:
 
 - `HierarchyOptimizer`: Optimizes the hierarchy using genetic algorithms
 - `HierarchyOptimizerConfig`: Configuration for the optimizer
 
 ### Pipeline
 
-The `GeneticSpecOptimizer.Pipeline` project ties everything together:
+The `SpecTreeGenerator.Pipeline` project ties everything together:
 
 - `OptimizationPipeline`: Main pipeline that orchestrates the optimization process
 - `OptimizationPipelineConfig`: Configuration for the pipeline

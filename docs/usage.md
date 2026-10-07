@@ -1,10 +1,39 @@
-# GeneticSpecOptimizer Usage Guide
+# SpecTreeGenerator Usage Guide
 
-This document provides detailed instructions for using the GeneticSpecOptimizer system to optimize specifications based on code analysis and genetic algorithms.
+This document provides detailed instructions for using the SpecTreeGenerator system to optimize specifications based on code analysis and genetic algorithms.
 
 ## Overview
 
-GeneticSpecOptimizer is a tool that analyzes your codebase and documentation, then uses genetic algorithms to optimize the specification hierarchy, reducing redundancy and improving maintainability.
+SpecTreeGenerator is a tool that analyzes your codebase and documentation, then uses genetic algorithms to optimize the specification hierarchy, reducing redundancy and improving maintainability.
+
+## Supported languages and project structures
+
+### Programming languages
+
+**C# is the only supported programming language.** Code analysis is built on
+Roslyn (the C# compiler platform) and parses `.cs` source files (up through
+C# 12) using the `csharp` language parser (`CSharpParser` in
+`SpecTreeGenerator.CodeAnalysis.Parsers`).
+
+Any file that is not a `.cs` file is ignored by the analysis step. Attempting
+to request a parser for another language throws
+`No parser available for language: <language>`.
+
+### Project structures
+
+There are **no constraints on project structure**:
+
+- The pipeline recursively scans the configured `SourceCodeDirectory` for
+  `*.cs` files (see `OptimizationPipeline.AnalyzeCodeAsync`).
+- No `.csproj` or `.sln` file is required for analysis; loose files work too.
+- Any layout works, including `src/` + `tests/` conventions, nested solutions,
+  monorepos (point at the sub-directory of interest), or single-file projects.
+
+### Documentation formats
+
+Documentation extraction supports Markdown (`.md`), HTML (`.html`, `.htm`),
+plain text (`.txt`), and Word (`.docx`); PDF (`.pdf`) is experimental. Files are
+converted to Markdown and mapped to the analyzed code components.
 
 ## Basic Usage
 

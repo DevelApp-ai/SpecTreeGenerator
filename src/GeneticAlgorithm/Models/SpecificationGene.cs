@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
-namespace GeneticSpecOptimizer.GeneticAlgorithm.Models
+namespace SpecTreeGenerator.GeneticAlgorithm.Models
 {
     /// <summary>
     /// Type of content section in a specification

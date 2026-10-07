@@ -4,7 +4,7 @@ using System.Linq;
 
 using Microsoft.CodeAnalysis.Text;
 
-namespace GeneticSpecOptimizer.Common.Models
+namespace SpecTreeGenerator.Common.Models
 {
     /// <summary>
     /// Represents a text span in a source file

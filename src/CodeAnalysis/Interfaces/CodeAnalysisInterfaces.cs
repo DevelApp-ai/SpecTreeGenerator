@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-
 using Microsoft.CodeAnalysis;
 
-namespace GeneticSpecOptimizer.CodeAnalysis.Interfaces
+using SpecTreeGenerator.Common.Models;
+namespace SpecTreeGenerator.CodeAnalysis.Interfaces
 {
     /// <summary>
     /// Interface for language parsers

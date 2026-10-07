@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.GeneticAlgorithm.Models;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.GeneticAlgorithm.Models;
 
-namespace GeneticSpecOptimizer.HierarchyOptimization.Interfaces
+namespace SpecTreeGenerator.HierarchyOptimization.Interfaces
 {
     /// <summary>
     /// Interface for hierarchy optimizers

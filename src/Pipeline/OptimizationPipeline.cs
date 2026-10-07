@@ -5,26 +5,25 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.CodeAnalysis.Analyzers;
-using GeneticSpecOptimizer.CodeAnalysis.Builders;
-using GeneticSpecOptimizer.CodeAnalysis.Extractors;
-using GeneticSpecOptimizer.CodeAnalysis.Generators;
-using GeneticSpecOptimizer.CodeAnalysis.Parsers;
-using GeneticSpecOptimizer.CodeAnalysis.SymbolAnalysis;
-using GeneticSpecOptimizer.Common.Models;
-using GeneticSpecOptimizer.DocumentationExtraction.Analyzers;
-using GeneticSpecOptimizer.DocumentationExtraction.Converters;
-using GeneticSpecOptimizer.DocumentationExtraction.Extractors;
-using GeneticSpecOptimizer.DocumentationExtraction.Parsers;
-using GeneticSpecOptimizer.GeneticAlgorithm.Encoding;
-using GeneticSpecOptimizer.GeneticAlgorithm.Evolution;
-using GeneticSpecOptimizer.GeneticAlgorithm.Fitness;
-using GeneticSpecOptimizer.HierarchyOptimization;
-using GeneticSpecOptimizer.SourceConsolidation;
-
 using Microsoft.SemanticKernel;
 
-namespace GeneticSpecOptimizer.Pipeline
+using SpecTreeGenerator.CodeAnalysis.Analyzers;
+using SpecTreeGenerator.CodeAnalysis.Builders;
+using SpecTreeGenerator.CodeAnalysis.Extractors;
+using SpecTreeGenerator.CodeAnalysis.Generators;
+using SpecTreeGenerator.CodeAnalysis.Parsers;
+using SpecTreeGenerator.CodeAnalysis.SymbolAnalysis;
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.DocumentationExtraction.Analyzers;
+using SpecTreeGenerator.DocumentationExtraction.Converters;
+using SpecTreeGenerator.DocumentationExtraction.Extractors;
+using SpecTreeGenerator.DocumentationExtraction.Parsers;
+using SpecTreeGenerator.GeneticAlgorithm.Encoding;
+using SpecTreeGenerator.GeneticAlgorithm.Evolution;
+using SpecTreeGenerator.GeneticAlgorithm.Fitness;
+using SpecTreeGenerator.HierarchyOptimization;
+using SpecTreeGenerator.SourceConsolidation;
+namespace SpecTreeGenerator.Pipeline
 {
     /// <summary>
     /// Configuration for the optimization pipeline

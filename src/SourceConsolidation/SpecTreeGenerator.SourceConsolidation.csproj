@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\SpecTreeGenerator.Common.csproj" />
+    <ProjectReference Include="..\DocumentationExtraction\SpecTreeGenerator.DocumentationExtraction.csproj" />
+  </ItemGroup>
+
+</Project>

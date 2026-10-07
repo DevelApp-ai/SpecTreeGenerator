@@ -4,13 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace GeneticSpecOptimizer.CodeAnalysis.Parsers
+using SpecTreeGenerator.Common.Models;
+namespace SpecTreeGenerator.CodeAnalysis.Parsers
 {
     /// <summary>
     /// Interface for language parsers

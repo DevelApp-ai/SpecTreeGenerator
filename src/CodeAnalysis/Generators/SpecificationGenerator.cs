@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
-namespace GeneticSpecOptimizer.CodeAnalysis.Generators
+namespace SpecTreeGenerator.CodeAnalysis.Generators
 {
     /// <summary>
     /// Implementation of the specification generator

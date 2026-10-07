@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Common.Models;
+using SpecTreeGenerator.Common.Models;
 
-namespace GeneticSpecOptimizer.DocumentationExtraction.Interfaces
+namespace SpecTreeGenerator.DocumentationExtraction.Interfaces
 {
     /// <summary>
     /// Interface for documentation converters

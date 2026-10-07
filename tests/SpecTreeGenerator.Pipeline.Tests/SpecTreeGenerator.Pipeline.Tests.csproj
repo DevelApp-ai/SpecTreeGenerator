@@ -17,9 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HierarchyOptimization\GeneticSpecOptimizer.HierarchyOptimization.csproj" />
-    <ProjectReference Include="..\..\src\GeneticAlgorithm\GeneticSpecOptimizer.GeneticAlgorithm.csproj" />
-    <ProjectReference Include="..\..\src\Common\GeneticSpecOptimizer.Common.csproj" />
+    <ProjectReference Include="..\..\src\Pipeline\SpecTreeGenerator.Pipeline.csproj" />
+    <ProjectReference Include="..\..\src\Common\SpecTreeGenerator.Common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GeneticSpecOptimizer.Pipeline;
+using SpecTreeGenerator.Pipeline;
 
-namespace GeneticSpecOptimizer.Sample
+namespace SpecTreeGenerator.Sample
 {
     /// <summary>
     /// Sample program to demonstrate the genetic algorithm-based specification optimization
@@ -15,7 +15,7 @@ namespace GeneticSpecOptimizer.Sample
     {
         public static async Task Main(string[] args)
         {
-            Console.WriteLine("Genetic Algorithm Specification Optimizer - Sample Run");
+            Console.WriteLine("SpecTreeGenerator - Sample Run");
             Console.WriteLine("======================================================");
             Console.WriteLine();
 
