@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using SpecTreeGenerator.CodeAnalysis.Abstractions;
 using SpecTreeGenerator.Common.Models;
 
@@ -75,84 +77,64 @@ namespace SpecTreeGenerator.CodeAnalysis.Roslyn
             string name = string.Empty;
             SyntaxNode? spanNode = node;
 
-            switch (node)
+            if (node is NamespaceDeclarationSyntax namespaceDecl)
             {
-                case NamespaceDeclarationSyntax namespaceDecl:
+                var symbol = semanticModel.GetDeclaredSymbol(namespaceDecl);
+                if (symbol != null)
                 {
-                    var symbol = semanticModel.GetDeclaredSymbol(namespaceDecl);
-                    if (symbol != null)
-                    {
-                        id = $"namespace:{symbol.ToDisplayString()}";
-                        type = ComponentType.Namespace;
-                        name = symbol.Name;
-                    }
-
-                    break;
+                    id = $"namespace:{symbol.ToDisplayString()}";
+                    type = ComponentType.Namespace;
+                    name = symbol.Name;
                 }
-
-                case ClassDeclarationSyntax classDecl:
+            }
+            else if (node is ClassDeclarationSyntax classDecl)
+            {
+                var symbol = semanticModel.GetDeclaredSymbol(classDecl);
+                if (symbol != null)
                 {
-                    var symbol = semanticModel.GetDeclaredSymbol(classDecl);
-                    if (symbol != null)
-                    {
-                        id = $"class:{symbol.ToDisplayString()}";
-                        type = ComponentType.Class;
-                        name = symbol.Name;
-                    }
-
-                    break;
+                    id = $"class:{symbol.ToDisplayString()}";
+                    type = ComponentType.Class;
+                    name = symbol.Name;
                 }
-
-                case InterfaceDeclarationSyntax interfaceDecl:
+            }
+            else if (node is InterfaceDeclarationSyntax interfaceDecl)
+            {
+                var symbol = semanticModel.GetDeclaredSymbol(interfaceDecl);
+                if (symbol != null)
                 {
-                    var symbol = semanticModel.GetDeclaredSymbol(interfaceDecl);
-                    if (symbol != null)
-                    {
-                        id = $"interface:{symbol.ToDisplayString()}";
-                        type = ComponentType.Interface;
-                        name = symbol.Name;
-                    }
-
-                    break;
+                    id = $"interface:{symbol.ToDisplayString()}";
+                    type = ComponentType.Interface;
+                    name = symbol.Name;
                 }
-
-                case MethodDeclarationSyntax methodDecl:
+            }
+            else if (node is MethodDeclarationSyntax methodDecl)
+            {
+                var symbol = semanticModel.GetDeclaredSymbol(methodDecl);
+                if (symbol != null)
                 {
-                    var symbol = semanticModel.GetDeclaredSymbol(methodDecl);
-                    if (symbol != null)
-                    {
-                        id = $"method:{symbol.ToDisplayString()}";
-                        type = ComponentType.Method;
-                        name = symbol.Name;
-                    }
-
-                    break;
+                    id = $"method:{symbol.ToDisplayString()}";
+                    type = ComponentType.Method;
+                    name = symbol.Name;
                 }
-
-                case PropertyDeclarationSyntax propertyDecl:
+            }
+            else if (node is PropertyDeclarationSyntax propertyDecl)
+            {
+                var symbol = semanticModel.GetDeclaredSymbol(propertyDecl);
+                if (symbol != null)
                 {
-                    var symbol = semanticModel.GetDeclaredSymbol(propertyDecl);
-                    if (symbol != null)
-                    {
-                        id = $"property:{symbol.ToDisplayString()}";
-                        type = ComponentType.Property;
-                        name = symbol.Name;
-                    }
-
-                    break;
+                    id = $"property:{symbol.ToDisplayString()}";
+                    type = ComponentType.Property;
+                    name = symbol.Name;
                 }
-
-                case EnumDeclarationSyntax enumDecl:
+            }
+            else if (node is EnumDeclarationSyntax enumDecl)
+            {
+                var symbol = semanticModel.GetDeclaredSymbol(enumDecl);
+                if (symbol != null)
                 {
-                    var symbol = semanticModel.GetDeclaredSymbol(enumDecl);
-                    if (symbol != null)
-                    {
-                        id = $"enum:{symbol.ToDisplayString()}";
-                        type = ComponentType.Enum;
-                        name = symbol.Name;
-                    }
-
-                    break;
+                    id = $"enum:{symbol.ToDisplayString()}";
+                    type = ComponentType.Enum;
+                    name = symbol.Name;
                 }
             }
 
