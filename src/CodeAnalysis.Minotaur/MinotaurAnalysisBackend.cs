@@ -23,7 +23,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
     /// resolution arrives with the Minotaur semantic binding engine
     /// (DevelApp-ai/Minotaur#121).
     /// </remarks>
-    public class MinotaurAnalysisBackend : ILanguageAnalysisBackend
+    public class MinotaurAnalysisBackend : ILanguageAnalysisBackend, IDisposable
     {
         private readonly string _grammarFilePath;
         private readonly StepParserEngine _engine;
@@ -43,6 +43,15 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
 
         /// <inheritdoc />
         public string Language { get; }
+
+        /// <summary>
+        /// Disposes the underlying StepParser engine.
+        /// </summary>
+        public void Dispose()
+        {
+            _engine.Dispose();
+            GC.SuppressFinalize(this);
+        }
 
         /// <inheritdoc />
         public IReadOnlyCollection<string> SupportedExtensions { get; }
@@ -125,7 +134,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
             };
         }
 
-        private void Walk(
+        private static void Walk(
             SymbolNode node,
             CognitiveGraph.CognitiveGraph graph,
             string sourceText,
@@ -267,6 +276,10 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
             return $"{type.ToString().ToLowerInvariant()}:{name}@{filePath}";
         }
 
+        private static readonly char[] DeclarationSeparators = { ' ', '\t', '\n', '\r', '(', '{', ':', ';' };
+
+        private static readonly char[] ReferenceSeparators = { ' ', '\t', '\n', '\r', '(', ':', ';', '{', ',' };
+
         private static string ExtractName(string nodeText, string ruleName)
         {
             // Declaration nodes in the supported grammars start with their
@@ -280,7 +293,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
                 "field", "func", "function", "def", "fun", "type", "declare",
                 "export", "default", "async", "const", "var", "let"
             };
-            var tokens = nodeText.Split(new[] { ' ', '\t', '\n', '\r', '(', '{', ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var tokens = nodeText.Split(DeclarationSeparators, StringSplitOptions.RemoveEmptyEntries);
             foreach (var token in tokens)
             {
                 if (token.Length > 0 && char.IsLetter(token[0]) && !keywords.Contains(token))
@@ -294,7 +307,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
 
         private static string ExtractReferenceName(string nodeText)
         {
-            var tokens = nodeText.Split(new[] { ' ', '\t', '\n', '\r', '(', ':', ';', '{', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var tokens = nodeText.Split(ReferenceSeparators, StringSplitOptions.RemoveEmptyEntries);
             foreach (var token in tokens)
             {
                 if (token.Length > 0 && (char.IsLetter(token[0]) || token[0] == '_'))
