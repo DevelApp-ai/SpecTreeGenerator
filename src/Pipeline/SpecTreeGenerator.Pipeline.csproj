@@ -3,6 +3,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\SpecTreeGenerator.Common.csproj" />
     <ProjectReference Include="..\CodeAnalysis\SpecTreeGenerator.CodeAnalysis.csproj" />
+    <ProjectReference Include="..\CodeAnalysis.Abstractions\SpecTreeGenerator.CodeAnalysis.Abstractions.csproj" />
+    <ProjectReference Include="..\CodeAnalysis.Roslyn\SpecTreeGenerator.CodeAnalysis.Roslyn.csproj" />
     <ProjectReference Include="..\DocumentationExtraction\SpecTreeGenerator.DocumentationExtraction.csproj" />
     <ProjectReference Include="..\GeneticAlgorithm\SpecTreeGenerator.GeneticAlgorithm.csproj" />
     <ProjectReference Include="..\HierarchyOptimization\SpecTreeGenerator.HierarchyOptimization.csproj" />

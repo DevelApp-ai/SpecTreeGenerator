@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 using Microsoft.SemanticKernel;
 
+using SpecTreeGenerator.CodeAnalysis.Abstractions;
 using SpecTreeGenerator.CodeAnalysis.Analyzers;
 using SpecTreeGenerator.CodeAnalysis.Builders;
 using SpecTreeGenerator.CodeAnalysis.Extractors;
+using SpecTreeGenerator.CodeAnalysis.Roslyn;
 using SpecTreeGenerator.CodeAnalysis.Generators;
 using SpecTreeGenerator.CodeAnalysis.Parsers;
 using SpecTreeGenerator.CodeAnalysis.SymbolAnalysis;
@@ -292,32 +294,33 @@ namespace SpecTreeGenerator.Pipeline
 
         private static async Task<CodeAnalysisResult> AnalyzeCodeAsync(string sourceCodeDirectory)
         {
-            // Get C# source files
-            var sourceFiles = Directory.GetFiles(sourceCodeDirectory, "*.cs", SearchOption.AllDirectories);
+            // Discover source files through the registered analysis backends
+            // (extension-driven; unknown extensions are skipped).
+            var registry = new AnalysisBackendRegistry()
+                .Register(new RoslynAnalysisBackend());
+            var sourceFiles = Directory.GetFiles(sourceCodeDirectory, "*", SearchOption.AllDirectories)
+                .Where(f => registry.ForFile(f) != null)
+                .ToList();
 
-            // Create language parser factory
-            var parserFactory = new LanguageParserFactory();
-            var parser = parserFactory.GetParser("csharp");
-
-            // Parse source files
+            // Parse source files into the language-agnostic IR
             var components = new List<CodeComponent>();
             var relationships = new List<CodeRelationship>();
+            var parsedSources = new List<ParsedSource>();
 
             foreach (var sourceFile in sourceFiles)
             {
-                // Parse file
-                var syntaxTree = await parser.ParseFileAsync(sourceFile);
+                var backend = registry.ForFile(sourceFile)!;
+                var parsed = await backend.ParseAsync(sourceFile);
+                parsedSources.Add(parsed);
+                components.AddRange(IrComponentExtractor.ExtractComponents(parsed));
+            }
 
-                // Build symbol table
-                var symbolTable = await SymbolTableBuilder.BuildSymbolTableAsync(syntaxTree, sourceFile);
-
-                // Extract components
-                var fileComponents = ComponentExtractor.ExtractComponents(syntaxTree, symbolTable);
-                components.AddRange(fileComponents);
-
-                // Analyze relationships
-                var fileRelationships = RelationshipAnalyzer.AnalyzeRelationships(fileComponents, symbolTable, syntaxTree);
-                relationships.AddRange(fileRelationships);
+            // Analyze relationships against the full component lookup
+            // (cross-file references need all components known up front).
+            var componentLookup = components.ToDictionary(c => c.Id);
+            foreach (var parsed in parsedSources)
+            {
+                relationships.AddRange(IrRelationshipAnalyzer.AnalyzeRelationships(parsed, componentLookup));
             }
 
             // Build code hierarchy

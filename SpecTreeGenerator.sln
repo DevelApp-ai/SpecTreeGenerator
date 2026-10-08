@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F3A01462-F83
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.CodeAnalysis", "src\CodeAnalysis\SpecTreeGenerator.CodeAnalysis.csproj", "{C087429F-CAFA-4754-BFBC-E9C00D4FFE3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.CodeAnalysis.Abstractions", "src\CodeAnalysis.Abstractions\SpecTreeGenerator.CodeAnalysis.Abstractions.csproj", "{8BD96575-8F06-4A29-A60A-609E1FCBF12D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.CodeAnalysis.Roslyn", "src\CodeAnalysis.Roslyn\SpecTreeGenerator.CodeAnalysis.Roslyn.csproj", "{32ACC742-8B54-4244-B644-81F71FFA7D52}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.Common", "src\Common\SpecTreeGenerator.Common.csproj", "{34DE4BF5-1971-4FEC-9672-88F4E5DA4167}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.DocumentationExtraction", "src\DocumentationExtraction\SpecTreeGenerator.DocumentationExtraction.csproj", "{32EE4B24-5D5D-4835-83DC-8E0B778DCB62}"
@@ -42,6 +46,14 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8BD96575-8F06-4A29-A60A-609E1FCBF12D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BD96575-8F06-4A29-A60A-609E1FCBF12D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BD96575-8F06-4A29-A60A-609E1FCBF12D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BD96575-8F06-4A29-A60A-609E1FCBF12D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32ACC742-8B54-4244-B644-81F71FFA7D52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32ACC742-8B54-4244-B644-81F71FFA7D52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32ACC742-8B54-4244-B644-81F71FFA7D52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32ACC742-8B54-4244-B644-81F71FFA7D52}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C087429F-CAFA-4754-BFBC-E9C00D4FFE3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C087429F-CAFA-4754-BFBC-E9C00D4FFE3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C087429F-CAFA-4754-BFBC-E9C00D4FFE3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
