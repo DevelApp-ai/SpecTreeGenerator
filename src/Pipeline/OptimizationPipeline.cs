@@ -289,12 +289,19 @@ namespace SpecTreeGenerator.Pipeline
         private static async Task<CodeAnalysisResult> AnalyzeCodeAsync(string sourceCodeDirectory)
         {
             // Discover source files through the registered analysis backends
-            // (extension-driven; unknown extensions are skipped).
+            // (extension-driven). Files whose extension no backend claims are
+            // skipped with a warning rather than crashing the run.
             var registry = new AnalysisBackendRegistry()
                 .Register(new RoslynAnalysisBackend());
-            var sourceFiles = Directory.GetFiles(sourceCodeDirectory, "*", SearchOption.AllDirectories)
+            var allFiles = Directory.GetFiles(sourceCodeDirectory, "*", SearchOption.AllDirectories);
+            var sourceFiles = allFiles
                 .Where(f => registry.ForFile(f) != null)
                 .ToList();
+            var skippedFiles = allFiles.Except(sourceFiles).ToList();
+            foreach (var skipped in skippedFiles)
+            {
+                Console.WriteLine($"[Pipeline] Warning: no analysis backend for '{skipped}'; file skipped.");
+            }
 
             // Parse source files into the language-agnostic IR
             var components = new List<CodeComponent>();

@@ -10,21 +10,33 @@ SpecTreeGenerator is a tool that analyzes your codebase and documentation, then 
 
 ### Programming languages
 
-**C# is the only supported programming language.** Code analysis is built on
-Roslyn (the C# compiler platform) and parses `.cs` source files (up through
-C# 12) using the `csharp` language parser (`CSharpParser` in
-`SpecTreeGenerator.CodeAnalysis.Parsers`).
+Code analysis is **backend-driven**: each language is served by an analysis
+backend (`ILanguageAnalysisBackend`) registered for its file extensions, and
+the pipeline routes every discovered file to the backend that claims its
+extension (`AnalysisBackendRegistry.ForFile`).
 
-Any file that is not a `.cs` file is ignored by the analysis step. Attempting
-to request a parser for another language throws
-`No parser available for language: <language>`.
+| Language | Extension(s) | Analysis backend | Relationship fidelity |
+|---|---|---|---|
+| C# (up to C# 12) | `.cs` | `RoslynAnalysisBackend` (Roslyn semantic model) | Precise: binder-resolved inheritance, implementation, and method-call edges |
+
+Files whose extension no backend claims are **skipped with a warning**
+(`no analysis backend for '<path>'; file skipped`) — the run continues.
+
+Additional languages (Java 8+, Python 3.11, TypeScript, and the rest of the
+[Minotaur-Grammars](https://github.com/DevelApp-ai/Minotaur-Grammars)
+catalog) are planned via a Minotaur/StepParser backend; a name-based
+relationship fidelity tier will apply until its semantic binder lands —
+see [issue #18](https://github.com/DevelApp-ai/SpecTreeGenerator/issues/18)
+and the
+[language version matrix](https://github.com/DevelApp-ai/Minotaur-Grammars/blob/main/docs/language-versions.md).
 
 ### Project structures
 
 There are **no constraints on project structure**:
 
 - The pipeline recursively scans the configured `SourceCodeDirectory` for
-  `*.cs` files (see `OptimizationPipeline.AnalyzeCodeAsync`).
+  files with backend-claimed extensions (see
+  `OptimizationPipeline.AnalyzeCodeAsync`).
 - No `.csproj` or `.sln` file is required for analysis; loose files work too.
 - Any layout works, including `src/` + `tests/` conventions, nested solutions,
   monorepos (point at the sub-directory of interest), or single-file projects.
