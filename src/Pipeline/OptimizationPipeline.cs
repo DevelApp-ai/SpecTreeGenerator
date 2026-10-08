@@ -8,13 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.SemanticKernel;
 
 using SpecTreeGenerator.CodeAnalysis.Abstractions;
-using SpecTreeGenerator.CodeAnalysis.Analyzers;
-using SpecTreeGenerator.CodeAnalysis.Builders;
-using SpecTreeGenerator.CodeAnalysis.Extractors;
-using SpecTreeGenerator.CodeAnalysis.Generators;
-using SpecTreeGenerator.CodeAnalysis.Parsers;
 using SpecTreeGenerator.CodeAnalysis.Roslyn;
-using SpecTreeGenerator.CodeAnalysis.SymbolAnalysis;
 using SpecTreeGenerator.Common.Models;
 using SpecTreeGenerator.DocumentationExtraction.Analyzers;
 using SpecTreeGenerator.DocumentationExtraction.Converters;

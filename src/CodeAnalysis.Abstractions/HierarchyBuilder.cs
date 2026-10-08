@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using SpecTreeGenerator.Common.Models;
 
-namespace SpecTreeGenerator.CodeAnalysis.Builders
+namespace SpecTreeGenerator.CodeAnalysis.Abstractions
 {
     /// <summary>
     /// Builds a code hierarchy from extracted components

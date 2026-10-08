@@ -7,12 +7,24 @@ using System.Threading.Tasks;
 
 using SpecTreeGenerator.Common.Models;
 
-namespace SpecTreeGenerator.CodeAnalysis.Generators
+namespace SpecTreeGenerator.CodeAnalysis.Abstractions
 {
     /// <summary>
     /// Implementation of the specification generator
     /// </summary>
-    public class SpecificationGenerator : Interfaces.ISpecificationGenerator
+
+    /// <summary>
+    /// Interface for specification generators
+    /// </summary>
+    public interface ISpecificationGenerator
+    {
+        /// <summary>
+        /// Generates specifications from a code hierarchy
+        /// </summary>
+        Task<IEnumerable<SpecificationFile>> GenerateSpecificationsAsync(CodeHierarchy hierarchy, bool includeImplementationDetails);
+    }
+
+    public class SpecificationGenerator : ISpecificationGenerator
     {
         /// <summary>
         /// Generates specifications from a code hierarchy
