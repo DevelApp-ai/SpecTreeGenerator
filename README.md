@@ -20,15 +20,25 @@ sections.
 
 ## Supported languages and project structures
 
-**C# is the only supported programming language.** Code analysis is built on
-[Roslyn](https://github.com/dotnet/roslyn) and parses `.cs` files (up through
-C# 12) via the `csharp` language parser. Files with other extensions are
-ignored by the analysis step.
+Code analysis is **backend-driven**: each language is served by an analysis
+backend registered for its file extensions. Files whose extension no backend
+claims are skipped with a warning (they never crash the run).
+
+| Language | Extension(s) | Analysis backend | Relationship fidelity |
+|---|---|---|---|
+| C# (up to C# 12) | `.cs` | `RoslynAnalysisBackend` (Roslyn semantic model) | Precise: binder-resolved inheritance, implementation, and method-call edges |
+
+Additional languages (Java 8+, Python 3.11, TypeScript, and the rest of the
+[Minotaur-Grammars](https://github.com/DevelApp-ai/Minotaur-Grammars) catalog)
+are planned via a Minotaur/StepParser backend — see
+[issue #18](https://github.com/DevelApp-ai/SpecTreeGenerator/issues/18). Until
+it lands, C# is the supported language.
 
 There are **no constraints on project structure**: the pipeline scans the
-configured `SourceCodeDirectory` recursively for `*.cs` files, so it works with
-any layout (project folders, `src/` + `tests/` conventions, nested solutions,
-or loose files). No `.csproj` or `.sln` file is required for analysis.
+configured `SourceCodeDirectory` recursively for files with backend-claimed
+extensions, so it works with any layout (project folders, `src/` + `tests/`
+conventions, nested solutions, or loose files). No `.csproj` or `.sln` file is
+required for analysis.
 
 Documentation extraction additionally accepts `.md`, `.html`/`.htm`, `.txt`,
 and `.docx` files (plus experimental `.pdf`). See the
