@@ -225,9 +225,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
             "funcdef" => ComponentType.Method,
             "decorated" => ComponentType.Class,
             // TypeScript grammar
-            "class-declaration-ts" or "namespace-declaration" => ComponentType.Class,
-            "interface-declaration" => ComponentType.Interface,
-            "enum-declaration" => ComponentType.Enum,
+            "namespace-declaration" => ComponentType.Class,
             "type-alias-declaration" => ComponentType.Class,
             // Legacy unversioned Java grammar (folder names)
             "class declaration" => ComponentType.Class,
@@ -282,7 +280,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
                 "field", "func", "function", "def", "fun", "type", "declare",
                 "export", "default", "async", "const", "var", "let"
             };
-            var tokens = nodeText.Split(' ', '\t', '\n', '\r', '(', '{', ':', ';', '{', StringSplitOptions.RemoveEmptyEntries);
+            var tokens = nodeText.Split(new[] { ' ', '\t', '\n', '\r', '(', '{', ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var token in tokens)
             {
                 if (token.Length > 0 && char.IsLetter(token[0]) && !keywords.Contains(token))
@@ -296,7 +294,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
 
         private static string ExtractReferenceName(string nodeText)
         {
-            var tokens = nodeText.Split(' ', '\t', '\n', '\r', '(', ':', ';', '{', ',', StringSplitOptions.RemoveEmptyEntries);
+            var tokens = nodeText.Split(new[] { ' ', '\t', '\n', '\r', '(', ':', ';', '{', ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var token in tokens)
             {
                 if (token.Length > 0 && (char.IsLetter(token[0]) || token[0] == '_'))
