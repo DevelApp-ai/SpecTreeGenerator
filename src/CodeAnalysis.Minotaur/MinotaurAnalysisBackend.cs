@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CognitiveGraph;
 using CognitiveGraph.Accessors;
 using DevelApp.StepParser;
 using SpecTreeGenerator.CodeAnalysis.Abstractions;
@@ -93,7 +92,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
             return single;
         }
 
-        private ParsedSource BuildParsedSource(string filePath, string sourceText, CognitiveGraph graph)
+        private ParsedSource BuildParsedSource(string filePath, string sourceText, CognitiveGraph.CognitiveGraph graph)
         {
             var declarations = new List<DeclarationNode>();
             var references = new List<ReferenceNode>();
@@ -128,7 +127,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
 
         private void Walk(
             SymbolNode node,
-            CognitiveGraph graph,
+            CognitiveGraph.CognitiveGraph graph,
             string sourceText,
             string filePath,
             List<DeclarationNode> declarations,
