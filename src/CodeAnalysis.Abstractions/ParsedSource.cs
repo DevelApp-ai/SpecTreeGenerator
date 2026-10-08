@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SpecTreeGenerator.Common.Models;
 
@@ -51,7 +52,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Abstractions
         public IReadOnlyList<string> BaseClassNames { get; set; } = Array.Empty<string>();
 
         /// <summary>Raw names of implemented interfaces, as written.</summary>
-        public IReadOnlyList<string> InterfaceNames { get; set; } = Array.Empty();
+        public IReadOnlyList<string> InterfaceNames { get; set; } = Array.Empty<string>();
 
         /// <summary>Source span of the declaration, mapped to the existing TextSpan model.</summary>
         public TextSpan Span { get; set; } = new TextSpan(0, 0);
