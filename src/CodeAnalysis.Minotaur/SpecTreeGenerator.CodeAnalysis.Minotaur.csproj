@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeAnalysis.Abstractions\SpecTreeGenerator.CodeAnalysis.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DevelApp.StepParser" Version="1.32.0" />
+  </ItemGroup>
+
+</Project>
