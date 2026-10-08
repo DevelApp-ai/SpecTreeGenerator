@@ -317,7 +317,12 @@ namespace SpecTreeGenerator.Pipeline
 
             // Analyze relationships against the full component lookup
             // (cross-file references need all components known up front).
-            var componentLookup = components.ToDictionary(c => c.Id);
+            // The same symbol id can appear once per file (e.g. a namespace
+            // declared in every file, partial types); the first occurrence
+            // wins for relationship resolution.
+            var componentLookup = components
+                .GroupBy(c => c.Id)
+                .ToDictionary(g => g.Key, g => g.First());
             foreach (var parsed in parsedSources)
             {
                 relationships.AddRange(IrRelationshipAnalyzer.AnalyzeRelationships(parsed, componentLookup));
