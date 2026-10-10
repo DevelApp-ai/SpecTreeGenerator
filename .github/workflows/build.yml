@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   build:
     strategy:
@@ -21,6 +25,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+          source-url: https://nuget.pkg.github.com/DevelApp-ai/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ github.token }}
 
       - name: Restore
         run: dotnet restore SpecTreeGenerator.sln
