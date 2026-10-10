@@ -20,11 +20,13 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
     /// pointing the constructor at the grammar file.
     /// </summary>
     /// <remarks>
-    /// Relationship fidelity is name-based in this tier: references are
-    /// recorded with their source-level names and resolved by matching
-    /// declaration names across the parsed sources. Precise binder-level
-    /// resolution arrives with the Minotaur semantic binding engine
-    /// (DevelApp-ai/Minotaur#121).
+    /// Relationship fidelity is tiered (SpecTreeGenerator#27): when the grammar
+    /// carries binding annotations (Grammar.Metadata["binding"], see
+    /// DevelApp-ai/Minotaur docs/semantic-binding.md), references are resolved
+    /// through the grammar-driven semantic binder with typed symbol identity
+    /// (ResolutionTier.Binder). Without annotations, the backend falls back to
+    /// declaration-name matching across the parsed sources (ResolutionTier.NameBased)
+    /// and same-name collisions resolve to null rather than a wrong target.
     /// </remarks>
     public class MinotaurAnalysisBackend : ILanguageAnalysisBackend, IDisposable
     {
@@ -128,6 +130,8 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
                 }
             }
 
+            ApplyBinderResolution(filePath, code, declarations, references);
+
             return new ParsedSource
             {
                 FilePath = filePath,
@@ -135,6 +139,129 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
                 Declarations = declarations,
                 References = references
             };
+        }
+
+        /// <summary>
+        /// Overlays typed symbol identity from the Minotaur grammar-driven
+        /// semantic binder when the grammar carries binding annotations
+        /// (SpecTreeGenerator#27). The binder's stable symbol ids replace the
+        /// name-derived ids on declarations, and resolved references carry the
+        /// binder's target ids at ResolutionTier.Binder; the name-based match
+        /// stays as the recorded fallback tier when annotations are absent.
+        /// </summary>
+        private void ApplyBinderResolution(
+            string filePath,
+            string sourceText,
+            List<DeclarationNode> declarations,
+            List<ReferenceNode> references)
+        {
+            if (!GrammarHasBindingAnnotations())
+            {
+                foreach (var reference in references)
+                {
+                    reference.Resolution = reference.ResolvedSymbolId == null
+                        ? ResolutionTier.Unresolved
+                        : ResolutionTier.NameBased;
+                }
+
+                return;
+            }
+
+            try
+            {
+                var engine = new Minotaur.Analysis.Symbolic.SymbolicAnalysisEngine();
+                var binding = engine.ParseAndBindAsync(sourceText, Language).GetAwaiter().GetResult();
+
+                // Binder declarations: stable container-qualified identity.
+                // Map by (name, container-qualified name) onto this backend's
+                // declaration nodes so symbol ids become binder-stable.
+                var byName = binding.Symbols
+                    .GroupBy(s => s.Name, StringComparer.Ordinal)
+                    .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
+                foreach (var declaration in declarations)
+                {
+                    if (byName.TryGetValue(declaration.Name, out var candidates))
+                    {
+                        var match = candidates.Count == 1
+                            ? candidates[0]
+                            : candidates.FirstOrDefault(c => string.Equals(
+                                c.FullyQualifiedName, declaration.FullName, StringComparison.Ordinal));
+                        if (match != null)
+                        {
+                            declaration.SymbolId = match.SymbolId;
+                            declaration.FullName = match.FullyQualifiedName;
+                            if (match.Line > 0)
+                            {
+                                declaration.IdentifierSpan = new TextSpan(
+                                    declaration.Span.Start, declaration.Span.Length);
+                            }
+                        }
+                    }
+                }
+
+                // Binder references: resolved ids win over the name-based
+                // match; unresolved ones are explicitly marked.
+                var referencesByName = references
+                    .Where(r => r.ResolvedSymbolId == null)
+                    .GroupBy(r => r.Name, StringComparer.Ordinal)
+                    .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
+                foreach (var bindingReference in binding.References)
+                {
+                    if (!referencesByName.TryGetValue(bindingReference.Name, out var unresolved))
+                    {
+                        continue;
+                    }
+
+                    foreach (var reference in unresolved)
+                    {
+                        reference.ResolvedSymbolId = bindingReference.ResolvedSymbolId;
+                        reference.Resolution = bindingReference.IsResolved
+                            ? ResolutionTier.Binder
+                            : ResolutionTier.Unresolved;
+                    }
+
+                    referencesByName.Remove(bindingReference.Name);
+                }
+
+                foreach (var reference in references)
+                {
+                    if (reference.Resolution == ResolutionTier.NameBased)
+                    {
+                        reference.Resolution = reference.ResolvedSymbolId == null
+                            ? ResolutionTier.Unresolved
+                            : ResolutionTier.NameBased;
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // The binder could not run against this source (parse shape
+                // mismatch); keep the name-based tier and its recorded limits.
+                foreach (var reference in references)
+                {
+                    reference.Resolution = reference.ResolvedSymbolId == null
+                        ? ResolutionTier.Unresolved
+                        : ResolutionTier.NameBased;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Whether the loaded grammar carries Minotaur binding annotations
+        /// (the declarative "binding" metadata key consumed by the semantic
+        /// binder; see DevelApp-ai/Minotaur docs/semantic-binding.md).
+        /// </summary>
+        private bool GrammarHasBindingAnnotations()
+        {
+            try
+            {
+                var content = File.ReadAllText(_grammarFilePath);
+                return content.Contains("binding", StringComparison.Ordinal);
+            }
+            catch (IOException)
+            {
+                return false;
+            }
         }
 
         private static void Walk(

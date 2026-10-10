@@ -30,9 +30,15 @@ claims are skipped with a warning (they never crash the run).
 
 Additional languages (Java 8+, Python 3.11, TypeScript, and the rest of the
 [Minotaur-Grammars](https://github.com/DevelApp-ai/Minotaur-Grammars) catalog)
-are planned via a Minotaur/StepParser backend — see
-[issue #18](https://github.com/DevelApp-ai/SpecTreeGenerator/issues/18). Until
-it lands, C# is the supported language.
+are served by the `MinotaurAnalysisBackend`. Relationship fidelity is
+**tiered** (issue
+[#27](https://github.com/DevelApp-ai/SpecTreeGenerator/issues/27)): grammars
+with Minotaur binding annotations resolve references through the
+grammar-driven semantic binder (typed symbol identity, no wrong edges from
+same-named types in different namespaces); grammars without annotations
+fall back to declaration-name matching, and same-name collisions resolve to
+*unresolved* rather than a guessed target. Every reference records its
+resolution tier.
 
 There are **no constraints on project structure**: the pipeline scans the
 configured `SourceCodeDirectory` recursively for files with backend-claimed

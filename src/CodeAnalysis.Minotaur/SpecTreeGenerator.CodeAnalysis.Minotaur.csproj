@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="DevelApp.StepParser" Version="1.47.0" />
+    <PackageReference Include="DevelApp.Minotaur" Version="1.5.20" />
   </ItemGroup>
 
   <!-- ICU4N (transitive via StepParser) emits ICU4N_IDE_0002 when its
