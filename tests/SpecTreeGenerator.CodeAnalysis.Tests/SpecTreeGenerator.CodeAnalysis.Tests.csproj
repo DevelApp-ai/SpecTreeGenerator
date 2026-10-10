@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CodeAnalysis.Minotaur\SpecTreeGenerator.CodeAnalysis.Minotaur.csproj" />
     <ProjectReference Include="..\..\src\CodeAnalysis.Abstractions\SpecTreeGenerator.CodeAnalysis.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Common\SpecTreeGenerator.Common.csproj" />
   </ItemGroup>
 
 </Project>
