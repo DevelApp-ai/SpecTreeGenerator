@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SpecTreeGenerator.CodeAnalysis.Abstractions;
 using SpecTreeGenerator.CodeAnalysis.Minotaur;
+using SpecTreeGenerator.Common.Models;
 using Xunit;
 
 namespace SpecTreeGenerator.CodeAnalysis.Tests;
