@@ -53,8 +53,8 @@ public sealed class MinotaurResolutionTests : IDisposable
         Keywords: class, package, extends
 
         <compilation-unit> ::= <package-declaration>? <class-declaration>?
-        <package-declaration> ::= package <identifier> ;
-        <class-declaration> ::= class <identifier> <class-body>
+        <package-declaration> ::= "package" <identifier> ";"
+        <class-declaration> ::= "class" <identifier> <class-body>
         <class-body> ::= "{" "}"
         <identifier> ::= /[A-Za-z_$][A-Za-z0-9_$]*/
         """;
