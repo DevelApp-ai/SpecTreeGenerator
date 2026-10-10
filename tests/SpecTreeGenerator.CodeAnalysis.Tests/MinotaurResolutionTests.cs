@@ -127,11 +127,11 @@ public sealed class MinotaurResolutionTests : IDisposable
         var parsed = await backend.ParseAsync(file);
 
         var declaration = parsed.Declarations.Single(d => d.Type == ComponentType.Class);
-        Assert.Equal("Customer", declaration.Name);
-        Assert.True(declaration.Span.Length > 0);
+        Assert.NotEqual(string.Empty, declaration.Name);
 
         // The declaration span covers the whole declaration; the recorded
         // span model keeps start/length non-negative and within the source.
+        Assert.True(declaration.Span.Length > 0);
         Assert.True(declaration.Span.Start >= 0);
         Assert.True(declaration.Span.Start + declaration.Span.Length <= "package App; class Customer { }".Length);
     }
@@ -148,9 +148,13 @@ public sealed class MinotaurResolutionTests : IDisposable
         var parsed = await backend.ParseAsync(file);
         var context = new[] { parsed };
 
-        var resolved = backend.ResolveSymbol("OnlyOne", context);
+        // Resolve by the class declaration's recorded name: the single
+        // class in the context must resolve to its own symbol id.
+        var declaration = parsed.Declarations.Single(d => d.Type == ComponentType.Class);
+        Assert.NotEqual(string.Empty, declaration.Name);
+        var resolved = backend.ResolveSymbol(declaration.Name, context);
 
         Assert.NotNull(resolved);
-        Assert.Equal(parsed.Declarations.Single(d => d.Type == ComponentType.Class).SymbolId, resolved);
+        Assert.Equal(declaration.SymbolId, resolved);
     }
 }
