@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevelApp.StepParser" Version="1.47.0" />
+    <PackageReference Include="DevelApp.StepParser" Version="1.48.0" />
     <PackageReference Include="DevelApp.Minotaur" Version="1.5.20" />
   </ItemGroup>
 
