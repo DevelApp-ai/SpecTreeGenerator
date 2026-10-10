@@ -169,7 +169,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
 
             try
             {
-                var engine = new Minotaur.Analysis.Symbolic.SymbolicAnalysisEngine();
+                var engine = new global::Minotaur.Analysis.Symbolic.SymbolicAnalysisEngine();
                 var binding = engine.ParseAndBindAsync(sourceText, Language).GetAwaiter().GetResult();
 
                 // Binder declarations: stable container-qualified identity.
