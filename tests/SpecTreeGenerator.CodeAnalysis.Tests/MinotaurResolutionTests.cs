@@ -52,7 +52,7 @@ public sealed class MinotaurResolutionTests : IDisposable
         FormatType: EBNF
         Keywords: class, package, extends
 
-        <compilation-unit> ::= <package-declaration>? <class-declaration>?
+        <compilation-unit> ::= <package-declaration> <class-declaration>
         <package-declaration> ::= "package" <identifier> ";"
         <class-declaration> ::= "class" <identifier> <class-body>
         <class-body> ::= "{" "}"
