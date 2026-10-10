@@ -130,7 +130,7 @@ namespace SpecTreeGenerator.CodeAnalysis.Minotaur
                 }
             }
 
-            ApplyBinderResolution(filePath, code, declarations, references);
+            ApplyBinderResolution(filePath, sourceText, declarations, references);
 
             return new ParsedSource
             {
