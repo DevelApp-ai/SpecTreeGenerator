@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- ICU4N (transitive via StepParser) emits ICU4N_IDE_0002 when its
+         buildTransitive target cannot detect the packing tasks DLL in the
+         current SDK; the check is advisory and unrelated to this project. -->
+    <NoWarn>$(NoWarn);ICU4N_IDE_0002</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
