@@ -57,6 +57,14 @@ namespace SpecTreeGenerator.CodeAnalysis.Abstractions
 
         /// <summary>Source span of the declaration, mapped to the existing TextSpan model.</summary>
         public TextSpan Span { get; set; } = new TextSpan(0, 0);
+
+        /// <summary>
+        /// Exact span of the declared identifier (just the name), distinct from
+        /// the enclosing declaration span. Documentation anchoring must use this
+        /// when the backend supplies it; null when only declaration-level spans
+        /// are available (SpecTreeGenerator#27, CognitiveGraph contract section 2).
+        /// </summary>
+        public TextSpan? IdentifierSpan { get; set; }
     }
 
     /// <summary>
@@ -80,6 +88,26 @@ namespace SpecTreeGenerator.CodeAnalysis.Abstractions
 
         /// <summary>Source span of the reference.</summary>
         public TextSpan Span { get; set; } = new TextSpan(0, 0);
+
+        /// <summary>
+        /// How the reference was resolved (SpecTreeGenerator#27): Binder when the
+        /// resolved id comes from the grammar-driven semantic binder (typed symbol
+        /// identity), NameBased for declaration-name matching fallback, and
+        /// Unresolved when no target was found. Defaults to NameBased so existing
+        /// backends keep their recorded tier.
+        /// </summary>
+        public ResolutionTier Resolution { get; set; } = ResolutionTier.NameBased;
+    }
+
+    /// <summary>How a reference's target was determined.</summary>
+    public enum ResolutionTier
+    {
+        /// <summary>Unresolved: no candidate target was found.</summary>
+        Unresolved,
+        /// <summary>Name-based fallback: matched by declaration name.</summary>
+        NameBased,
+        /// <summary>Binder: typed symbol identity from the semantic binder.</summary>
+        Binder
     }
 
     /// <summary>Kind of symbolic reference.</summary>

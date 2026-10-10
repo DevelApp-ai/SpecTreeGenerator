@@ -24,10 +24,16 @@ Files whose extension no backend claims are **skipped with a warning**
 
 Additional languages (Java 8+, Python 3.11, TypeScript, and the rest of the
 [Minotaur-Grammars](https://github.com/DevelApp-ai/Minotaur-Grammars)
-catalog) are planned via a Minotaur/StepParser backend; a name-based
-relationship fidelity tier will apply until its semantic binder lands —
-see [issue #18](https://github.com/DevelApp-ai/SpecTreeGenerator/issues/18)
-and the
+catalog) are served by the `MinotaurAnalysisBackend`. Relationship fidelity
+is **tiered** (issue
+[#27](https://github.com/DevelApp-ai/SpecTreeGenerator/issues/27)): when
+the grammar carries Minotaur binding annotations, references resolve
+through the grammar-driven semantic binder with typed symbol identity
+(`ResolutionTier.Binder` — no wrong edges from same-named types in
+different namespaces); without annotations the backend falls back to
+declaration-name matching (`ResolutionTier.NameBased`), and same-name
+collisions resolve to *unresolved* rather than a guessed target. Every
+reference records its tier. See the
 [language version matrix](https://github.com/DevelApp-ai/Minotaur-Grammars/blob/main/docs/language-versions.md).
 
 ### Project structures

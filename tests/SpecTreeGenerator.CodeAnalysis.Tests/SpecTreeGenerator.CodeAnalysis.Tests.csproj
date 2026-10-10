@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- ICU4N (transitive via StepParser) emits ICU4N_IDE_0002 when its
+         buildTransitive target cannot detect the packing tasks DLL in the
+         current SDK; the check is advisory and unrelated to this project. -->
+    <NoWarn>$(NoWarn);ICU4N_IDE_0002</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CodeAnalysis.Minotaur\SpecTreeGenerator.CodeAnalysis.Minotaur.csproj" />
+    <ProjectReference Include="..\..\src\CodeAnalysis.Abstractions\SpecTreeGenerator.CodeAnalysis.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Common\SpecTreeGenerator.Common.csproj" />
+  </ItemGroup>
+
+</Project>
