@@ -129,10 +129,11 @@ public sealed class MinotaurResolutionTests : IDisposable
         var parsed = await backend.ParseAsync(file);
 
         var declaration = parsed.Declarations.Single(d => d.Type == ComponentType.Class);
-        Assert.NotEqual(string.Empty, declaration.Name);
+        Assert.Equal("Customer", declaration.Name);
 
-        // The declaration span covers the whole declaration; the recorded
-        // span model keeps start/length non-negative and within the source.
+        // The declaration span covers the whole declaration; with the
+        // StepParser 1.48.0 span fix (ENFAStepLexer-StepParser#98), spans
+        // map to exact 0-based source offsets.
         Assert.True(declaration.Span.Length > 0);
         Assert.True(declaration.Span.Start >= 0);
         Assert.True(declaration.Span.Start + declaration.Span.Length <= "package App; class Customer { }".Length);
@@ -150,10 +151,10 @@ public sealed class MinotaurResolutionTests : IDisposable
         var parsed = await backend.ParseAsync(file);
         var context = new[] { parsed };
 
-        // Resolve by the class declaration's recorded name: the single
-        // class in the context must resolve to its own symbol id.
+        // The class name extracts exactly with the StepParser 1.48.0
+        // span fix; the single class resolves to its own symbol id.
         var declaration = parsed.Declarations.Single(d => d.Type == ComponentType.Class);
-        Assert.NotEqual(string.Empty, declaration.Name);
+        Assert.Equal("OnlyOne", declaration.Name);
         var resolved = backend.ResolveSymbol(declaration.Name, context);
 
         Assert.NotNull(resolved);
