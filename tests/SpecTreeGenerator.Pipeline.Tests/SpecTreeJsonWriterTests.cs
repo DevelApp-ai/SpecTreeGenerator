@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using SpecTreeGenerator.Common.Models;
-using SpecTreeGenerator.Pipeline;
 using Xunit;
 
+using SpecTreeGenerator.Common.Models;
+using SpecTreeGenerator.Pipeline;
 namespace SpecTreeGenerator.Pipeline.Tests;
 
 /// <summary>
