@@ -70,8 +70,8 @@ namespace SpecTreeGenerator.Pipeline
             OptimizationMetrics metrics,
             string sourceCodeDirectory)
         {
-            if (specifications == null) throw new ArgumentNullException(nameof(specifications));
-            if (metrics == null) throw new ArgumentNullException(nameof(metrics));
+            ArgumentNullException.ThrowIfNull(specifications);
+            ArgumentNullException.ThrowIfNull(metrics);
 
             var nodesById = new Dictionary<string, SpecTreeNodeDto>();
             var roots = new List<SpecTreeNodeDto>();
@@ -117,7 +117,7 @@ namespace SpecTreeGenerator.Pipeline
         /// </summary>
         public static string Write(SpecTreeDocumentDto document, string outputDirectory)
         {
-            if (document == null) throw new ArgumentNullException(nameof(document));
+            ArgumentNullException.ThrowIfNull(document);
             if (string.IsNullOrEmpty(outputDirectory)) throw new ArgumentException("Output directory is required", nameof(outputDirectory));
 
             Directory.CreateDirectory(outputDirectory);
