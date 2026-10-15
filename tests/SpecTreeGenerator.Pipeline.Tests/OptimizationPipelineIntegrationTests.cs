@@ -138,6 +138,23 @@ The CalculatorService performs basic arithmetic calculations.
     }
 
     [Fact]
+    public async Task RunAsync_EndToEnd_WritesSpecTreeJson()
+    {
+        var pipeline = new OptimizationPipeline();
+        var result = await pipeline.RunAsync(CreateConfig(_sourceDir, _outputDir));
+
+        Assert.NotNull(result.SpecTreeJsonPath);
+        Assert.True(File.Exists(result.SpecTreeJsonPath));
+        Assert.Equal("spectree.json", Path.GetFileName(result.SpecTreeJsonPath));
+
+        using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllText(result.SpecTreeJsonPath));
+        var root = doc.RootElement;
+        Assert.Equal("1.0", root.GetProperty("schemaVersion").GetString());
+        Assert.Equal(_sourceDir, root.GetProperty("sourceCodeDirectory").GetString());
+        Assert.True(root.GetProperty("roots").GetArrayLength() > 0);
+    }
+
+    [Fact]
     public async Task RunAsync_EndToEnd_ReportsSaneMetrics()
     {
         var pipeline = new OptimizationPipeline();

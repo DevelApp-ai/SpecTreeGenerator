@@ -160,6 +160,11 @@ namespace SpecTreeGenerator.Pipeline
         /// Output file paths
         /// </summary>
         public List<string> OutputFilePaths { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Path to the machine-readable spec tree JSON (spectree.json), when generated
+        /// </summary>
+        public string? SpecTreeJsonPath { get; set; }
     }
 
     /// <summary>
@@ -272,6 +277,12 @@ namespace SpecTreeGenerator.Pipeline
             // Step 5: Output Generation
             ReportProgress(PipelineStage.OutputGeneration, "Generating output files", 0);
             var outputFilePaths = GenerateOutputFiles(optimizationResult.OptimizedSpecifications, config.OutputDirectory);
+            var metrics = OptimizationMetrics.FromHierarchyOptimizationMetrics(optimizationResult.Metrics);
+            var specTreeDocument = SpecTreeJsonWriter.BuildDocument(
+                optimizationResult.OptimizedSpecifications,
+                metrics,
+                config.SourceCodeDirectory);
+            var specTreeJsonPath = SpecTreeJsonWriter.Write(specTreeDocument, config.OutputDirectory);
             ReportProgress(PipelineStage.OutputGeneration, "Output files generated", 100);
 
             // Report completion
@@ -282,7 +293,8 @@ namespace SpecTreeGenerator.Pipeline
             {
                 OptimizedSpecifications = optimizationResult.OptimizedSpecifications,
                 Metrics = OptimizationMetrics.FromHierarchyOptimizationMetrics(optimizationResult.Metrics),
-                OutputFilePaths = outputFilePaths
+                OutputFilePaths = outputFilePaths,
+                SpecTreeJsonPath = specTreeJsonPath
             };
         }
 

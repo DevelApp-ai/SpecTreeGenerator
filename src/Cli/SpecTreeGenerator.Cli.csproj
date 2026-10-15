@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pipeline\SpecTreeGenerator.Pipeline.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>spectree</AssemblyName>
+    <RootNamespace>SpecTreeGenerator.Cli</RootNamespace>
+  </PropertyGroup>
+
+</Project>
