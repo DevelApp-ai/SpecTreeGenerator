@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using SpecTreeGenerator.Common.Models;
+
 namespace SpecTreeGenerator.Pipeline
 {
     /// <summary>

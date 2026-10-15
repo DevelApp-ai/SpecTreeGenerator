@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using SpecTreeGenerator.Common.Models;
 using SpecTreeGenerator.Pipeline;
+
 namespace SpecTreeGenerator.Cli
 {
     /// <summary>
