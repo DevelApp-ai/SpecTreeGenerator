@@ -138,6 +138,84 @@ Console.WriteLine($"Size reduction: {result.Metrics.SizeReductionPercentage:F1}%
 | ConvergenceGenerations | Number of generations with no improvement to consider converged | 10 |
 | RandomSeed | Random seed for reproducibility | null |
 
+## Machine-readable output: the spectree.json contract
+
+Every pipeline run writes a machine-readable description of the optimized
+spec tree next to the `.md` files: `spectree.json`. It is the stable
+contract consumed by downstream tools such as **CitizenCodeLab project
+import** (which maps the tree onto its virtual structure and generates
+initial `.ai` specification files).
+
+### Schema (version 1.0)
+
+```json
+{
+  "schemaVersion": "1.0",
+  "generatedAtUtc": "2026-10-15T19:40:00Z",
+  "sourceCodeDirectory": "/path/to/your/code",
+  "roots": [
+    {
+      "id": "<specification id>",
+      "name": "<specification name>",
+      "componentId": "<analyzed component id>",
+      "parentSpecificationId": null,
+      "filePath": "<original source file path>",
+      "outputFileName": "<Name_With_Underscores>.md",
+      "metadata": { },
+      "children": [ { "..." : "nested the same way" } ]
+    }
+  ],
+  "metrics": {
+    "originalSize": 0,
+    "optimizedSize": 0,
+    "sizeReductionPercentage": 0.0,
+    "totalSections": 0,
+    "inheritedSections": 0,
+    "inheritancePercentage": 0.0,
+    "hierarchyDepth": 0
+  }
+}
+```
+
+Notes for consumers:
+
+- `roots` is the top level of the optimized hierarchy; each node's `children`
+  nest the same node shape recursively.
+- A specification whose `parentSpecificationId` refers to a specification not
+  present in the tree appears at the root level (never dropped).
+- `outputFileName` matches the `.md` file written by the pipeline, relative to
+  the output directory.
+- `metadata` is an open dictionary; keys are added by the consolidation and
+  optimization stages.
+
+### CLI
+
+The `SpecTreeGenerator.Cli` project (assembly `spectree`) exposes the pipeline
+as a command-line tool for headless/embedded use:
+
+```bash
+dotnet run --project src/Cli -- \
+  --source /path/to/your/code \
+  --output /path/to/output \
+  [--docs /path/to/docs] \
+  [--json-only] \
+  [--max-minutes 5]
+```
+
+Options:
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--source` | Directory containing the source code to reverse-engineer | (required) |
+| `--output` | Directory for the `.md` files and `spectree.json` | current directory |
+| `--docs` | Directory scanned for documentation (`.md`, `.html`, `.txt`, `.docx`) | none |
+| `--json-only` | Write only `spectree.json`, skip the `.md` files | false |
+| `--max-minutes` | Maximum time in minutes for hierarchy optimization | 5 |
+| `--mistral-api-key` | Mistral AI API key (falls back to the local deterministic extractor) | `MISTRAL_API_KEY` env |
+
+The absolute path of the written `spectree.json` is printed to **stdout**
+(only that path, for easy scripting); progress and diagnostics go to stderr.
+
 ## Advanced Usage
 
 ### Custom Fitness Functions

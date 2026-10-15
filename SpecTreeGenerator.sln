@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.Pipeline"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "src\Sample\Sample.csproj", "{08EC20FE-C2B1-427D-912D-33A74B16B44C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.Cli", "src\Cli\SpecTreeGenerator.Cli.csproj", "{5C7C1E2A-9B3D-4E5F-8A10-11A2B3C4D5E9}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTreeGenerator.SourceConsolidation", "src\SourceConsolidation\SpecTreeGenerator.SourceConsolidation.csproj", "{095FCE20-D367-46D8-9D52-1339011575CF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{58C95572-D973-4C9C-8DF9-56C1866B36F1}"
@@ -49,6 +51,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C7C1E2A-9B3D-4E5F-8A10-11A2B3C4D5E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C7C1E2A-9B3D-4E5F-8A10-11A2B3C4D5E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C7C1E2A-9B3D-4E5F-8A10-11A2B3C4D5E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C7C1E2A-9B3D-4E5F-8A10-11A2B3C4D5E9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E85EAB65-C3BF-4D17-A478-C14B61A55CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E85EAB65-C3BF-4D17-A478-C14B61A55CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E85EAB65-C3BF-4D17-A478-C14B61A55CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
