@@ -35,7 +35,7 @@ public class MeasurementEngineTests
             "    /// </summary>\n" +
             "    public class GadgetService\n" +
             "    {\n" +
-            "        public string GetGadget() => \"gadget\";\n" +
+            "        public string GetGadgetDetails() => \"gadget\";\n" +
             "    }\n" +
             "}\n");
         return root;
