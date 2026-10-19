@@ -330,7 +330,9 @@ namespace SpecTreeGenerator.Measurements
             };
             var result = await pipeline.RunAsync(config);
 
-            var componentNameById = result.CodeComponents.ToDictionary(c => c.Id, c => c.Name);
+            var componentNameById = result.CodeComponents
+                .GroupBy(c => c.Id)
+                .ToDictionary(g => g.Key, g => g.First().Name);
             var extracted = result.DocumentationSnippets
                 .Where(s => componentNameById.TryGetValue(s.TargetComponentId, out _))
                 .Select(s => (Section: s.SourceSectionTitle.Trim(), Component: componentNameById[s.TargetComponentId]))
