@@ -145,7 +145,7 @@ public class MeasurementEngineTests
         var docsDir = Path.Combine(repo, "docs");
         Directory.CreateDirectory(docsDir);
         File.WriteAllText(Path.Combine(docsDir, "README.md"),
-            "# Fixture\n\n## Widget Service\n\nThe WidgetService provides widget data.\n\n## Gadget Service\n\nThe GadgetService provides gadget data.\n");
+            "## Widget Service\n\nThe WidgetService provides widget data.\n\n## Gadget Service\n\nThe GadgetService provides gadget data.\n");
         var groundTruth = Path.Combine(repo, "ground-truth.txt");
         File.WriteAllText(groundTruth,
             "Widget Service|WidgetService\n" +
