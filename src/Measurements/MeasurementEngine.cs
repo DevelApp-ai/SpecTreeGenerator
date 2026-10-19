@@ -418,17 +418,18 @@ namespace SpecTreeGenerator.Measurements
             return results;
         }
 
+        private static readonly JsonSerializerOptions ReportSerializerOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new JsonStringEnumConverter() }
+        };
+
         public static string WriteReport(MeasurementReport report, string outputDirectory)
         {
             Directory.CreateDirectory(outputDirectory);
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters = { new JsonStringEnumConverter() }
-            };
             var path = Path.Combine(outputDirectory, "measurements.json");
-            File.WriteAllText(path, JsonSerializer.Serialize(report, options));
+            File.WriteAllText(path, JsonSerializer.Serialize(report, ReportSerializerOptions));
             return path;
         }
     }
