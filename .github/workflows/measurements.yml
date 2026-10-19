@@ -1,0 +1,63 @@
+name: measurements
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  MEASURE_REPOS: >-
+    DevelApp-ai/SpecTreeGenerator
+    DevelApp-ai/CitizenCodeLab
+    DevelApp-ai/EventStorming
+
+jobs:
+  measurements:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          source-url: https://nuget.pkg.github.com/DevelApp-ai/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ github.token }}
+      - name: Publish measurement tool
+        run: dotnet publish src/Measurements/SpecTreeGenerator.Measurements.csproj -c Release -o ./artifacts/measure
+      - name: Clone target repositories
+        run: |
+          mkdir -p repos
+          for repo in $MEASURE_REPOS; do
+            name=$(basename "$repo")
+            git clone --depth 1 "https://github.com/${repo}.git" "repos/$name"
+            echo "$repo $(git -C "repos/$name" rev-parse HEAD)" >> results-manifest.txt
+          done
+      - name: Run measurement battery
+        run: |
+          mkdir -p results
+          MEASURE=./artifacts/measure/spectree-measure
+          for repo in repos/*/; do
+            name=$(basename "$repo")
+            echo "Measuring $name"
+            mkdir -p "results/$name"
+            $MEASURE hierarchy --source "$repo" --output "results/$name/hierarchy" --max-minutes 5 --seed 42 \
+              > "results/$name/hierarchy.json" 2> "results/$name/hierarchy.log" || exit 1
+            $MEASURE optimizers --source "$repo" --max-minutes 5 --seed 42 \
+              > "results/$name/optimizers.json" 2> "results/$name/optimizers.log" || exit 1
+            $MEASURE languages --source "$repo" \
+              > "results/$name/languages.json" 2> "results/$name/languages.log" || exit 1
+          done
+          $MEASURE sensitivity --source repos/SpecTreeGenerator --seed 42 \
+            > results/sensitivity.json 2> results/sensitivity.log || exit 1
+          cp results-manifest.txt results/manifest.txt
+      - name: Upload measurement results
+        uses: actions/upload-artifact@v4
+        with:
+          name: measurements-results
+          path: results/

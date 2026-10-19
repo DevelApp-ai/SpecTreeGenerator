@@ -61,7 +61,8 @@ namespace SpecTreeGenerator.DocumentationExtraction.Extractors
                         {
                             TargetComponentId = component.ComponentId!,
                             Content = section.Content.Trim(),
-                            RelevanceScore = Math.Round(score, 2)
+                            RelevanceScore = Math.Round(score, 2),
+                            SourceSectionTitle = section.Title
                         });
                     }
                 }
