@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+
 using SpecTreeGenerator.Common.Models;
 using SpecTreeGenerator.GeneticAlgorithm.Encoding;
 using SpecTreeGenerator.GeneticAlgorithm.Fitness;

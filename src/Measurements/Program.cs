@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+
 using SpecTreeGenerator.Common.Models;
 
 namespace SpecTreeGenerator.Measurements
@@ -78,47 +79,47 @@ namespace SpecTreeGenerator.Measurements
             switch (command)
             {
                 case "hierarchy":
-                {
-                    var result = await MeasurementEngine.RunHierarchyBenchmarkAsync(source, output, optimizerConfig);
-                    Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
-                    return 0;
-                }
+                    {
+                        var result = await MeasurementEngine.RunHierarchyBenchmarkAsync(source, output, optimizerConfig);
+                        Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
+                        return 0;
+                    }
                 case "optimizers":
-                {
-                    var result = await MeasurementEngine.CompareOptimizersAsync(source, optimizerConfig);
-                    Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
-                    return 0;
-                }
+                    {
+                        var result = await MeasurementEngine.CompareOptimizersAsync(source, optimizerConfig);
+                        Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
+                        return 0;
+                    }
                 case "sensitivity":
-                {
-                    var variants = BuildDefaultSensitivityVariants(seed);
-                    var result = await MeasurementEngine.MeasureParameterSensitivityAsync(source, variants);
-                    Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
-                    return 0;
-                }
+                    {
+                        var variants = BuildDefaultSensitivityVariants(seed);
+                        var result = await MeasurementEngine.MeasureParameterSensitivityAsync(source, variants);
+                        Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
+                        return 0;
+                    }
                 case "docmapping":
-                {
-                    if (string.IsNullOrEmpty(docs) || !Directory.Exists(docs))
                     {
-                        Console.Error.WriteLine("Error: docmapping requires --docs pointing to an existing directory.");
-                        return 2;
+                        if (string.IsNullOrEmpty(docs) || !Directory.Exists(docs))
+                        {
+                            Console.Error.WriteLine("Error: docmapping requires --docs pointing to an existing directory.");
+                            return 2;
+                        }
+                        if (string.IsNullOrEmpty(groundTruth) || !File.Exists(groundTruth))
+                        {
+                            Console.Error.WriteLine("Error: docmapping requires --ground-truth pointing to an existing file.");
+                            return 2;
+                        }
+                        var result = await MeasurementEngine.MeasureDocumentationMappingAsync(source, docs, groundTruth);
+                        Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
+                        return 0;
                     }
-                    if (string.IsNullOrEmpty(groundTruth) || !File.Exists(groundTruth))
-                    {
-                        Console.Error.WriteLine("Error: docmapping requires --ground-truth pointing to an existing file.");
-                        return 2;
-                    }
-                    var result = await MeasurementEngine.MeasureDocumentationMappingAsync(source, docs, groundTruth);
-                    Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
-                    return 0;
-                }
                 case "languages":
-                {
-                    var result = await MeasurementEngine.MeasureLanguageFidelityAsync(
-                        source, new List<CodeAnalysis.Abstractions.ILanguageAnalysisBackend>());
-                    Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
-                    return 0;
-                }
+                    {
+                        var result = await MeasurementEngine.MeasureLanguageFidelityAsync(
+                            source, new List<CodeAnalysis.Abstractions.ILanguageAnalysisBackend>());
+                        Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
+                        return 0;
+                    }
                 default:
                     Console.Error.WriteLine($"Unknown command: {command}");
                     PrintUsage();
