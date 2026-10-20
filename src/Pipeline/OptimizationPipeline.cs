@@ -77,6 +77,14 @@ namespace SpecTreeGenerator.Pipeline
         /// Optional custom Mistral-compatible endpoint (defaults to the Mistral AI API)
         /// </summary>
         public string MistralEndpoint { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Additional language analysis backends registered alongside the default
+        /// Roslyn (C#) backend, keyed by file extension. Used for per-language
+        /// extraction fidelity measurements.
+        /// </summary>
+        public List<CodeAnalysis.Abstractions.ILanguageAnalysisBackend> AdditionalAnalysisBackends { get; set; }
+            = new List<CodeAnalysis.Abstractions.ILanguageAnalysisBackend>();
     }
 
     /// <summary>
@@ -165,6 +173,43 @@ namespace SpecTreeGenerator.Pipeline
         /// Path to the machine-readable spec tree JSON (spectree.json), when generated
         /// </summary>
         public string? SpecTreeJsonPath { get; set; }
+
+        /// <summary>
+        /// Specifications before hierarchy optimization (the flat input layout)
+        /// </summary>
+        public List<SpecificationFile> ConsolidatedSpecifications { get; set; } = new List<SpecificationFile>();
+
+        /// <summary>
+        /// Code components extracted by the analysis stage
+        /// </summary>
+        public List<CodeComponent> CodeComponents { get; set; } = new List<CodeComponent>();
+
+        /// <summary>
+        /// Documentation snippets extracted by the documentation stage
+        /// </summary>
+        public List<DocumentationExtraction.Extractors.DocumentationSnippet> DocumentationSnippets { get; set; }
+            = new List<DocumentationExtraction.Extractors.DocumentationSnippet>();
+
+        /// <summary>
+        /// Best fitness per generation of the genetic optimizer (index 0 = initial population)
+        /// </summary>
+        public List<double> FitnessHistory { get; set; } = new List<double>();
+
+        /// <summary>
+        /// Whether the genetic optimizer reported convergence
+        /// </summary>
+        public bool Converged { get; set; }
+
+        /// <summary>
+        /// Number of generations run by the genetic optimizer
+        /// </summary>
+        public int Generations { get; set; }
+
+        /// <summary>
+        /// Wall time per pipeline stage
+        /// </summary>
+        public Dictionary<PipelineStage, TimeSpan> StageDurations { get; set; }
+            = new Dictionary<PipelineStage, TimeSpan>();
     }
 
     /// <summary>
@@ -251,14 +296,21 @@ namespace SpecTreeGenerator.Pipeline
                     ? "Pipeline initialized (no AI credentials configured; using local semantic extraction)"
                     : $"Pipeline initialized (semantic analysis via {kernelMode})", 0);
 
+            var stageDurations = new Dictionary<PipelineStage, TimeSpan>();
+            var stageStopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             // Step 1: Code Analysis
             ReportProgress(PipelineStage.CodeAnalysis, "Starting code analysis", 0);
-            var codeAnalysisResult = await AnalyzeCodeAsync(config.SourceCodeDirectory);
+            var codeAnalysisResult = await AnalyzeCodeAsync(config.SourceCodeDirectory, config.AdditionalAnalysisBackends);
+            stageDurations[PipelineStage.CodeAnalysis] = stageStopwatch.Elapsed;
+            stageStopwatch.Restart();
             ReportProgress(PipelineStage.CodeAnalysis, "Code analysis completed", 100);
 
             // Step 2: Documentation Extraction
             ReportProgress(PipelineStage.DocumentationExtraction, "Starting documentation extraction", 0);
             var docExtractionResult = await ExtractDocumentationAsync(config.DocumentationFiles, kernel, codeAnalysisResult.CodeHierarchy);
+            stageDurations[PipelineStage.DocumentationExtraction] = stageStopwatch.Elapsed;
+            stageStopwatch.Restart();
             ReportProgress(PipelineStage.DocumentationExtraction, "Documentation extraction completed", 100);
 
             // Step 3: Source Consolidation
@@ -267,11 +319,15 @@ namespace SpecTreeGenerator.Pipeline
             var consolidatedSpecs = sourceConsolidator
                 .ConsolidateSources(codeAnalysisResult, docExtractionResult)
                 .ToList();
+            stageDurations[PipelineStage.SourceConsolidation] = stageStopwatch.Elapsed;
+            stageStopwatch.Restart();
             ReportProgress(PipelineStage.SourceConsolidation, "Source consolidation completed", 100);
 
             // Step 4: Hierarchy Optimization
             ReportProgress(PipelineStage.HierarchyOptimization, "Starting hierarchy optimization", 0);
             var optimizationResult = await OptimizeHierarchyAsync(consolidatedSpecs, config.OptimizerConfig);
+            stageDurations[PipelineStage.HierarchyOptimization] = stageStopwatch.Elapsed;
+            stageStopwatch.Restart();
             ReportProgress(PipelineStage.HierarchyOptimization, "Hierarchy optimization completed", 100);
 
             // Step 5: Output Generation
@@ -294,17 +350,30 @@ namespace SpecTreeGenerator.Pipeline
                 OptimizedSpecifications = optimizationResult.OptimizedSpecifications,
                 Metrics = OptimizationMetrics.FromHierarchyOptimizationMetrics(optimizationResult.Metrics),
                 OutputFilePaths = outputFilePaths,
-                SpecTreeJsonPath = specTreeJsonPath
+                SpecTreeJsonPath = specTreeJsonPath,
+                ConsolidatedSpecifications = consolidatedSpecs,
+                CodeComponents = codeAnalysisResult.Components,
+                DocumentationSnippets = docExtractionResult.Snippets,
+                FitnessHistory = optimizationResult.EvolutionResult.FitnessHistory,
+                Converged = optimizationResult.EvolutionResult.Converged,
+                Generations = optimizationResult.EvolutionResult.Generations,
+                StageDurations = stageDurations
             };
         }
 
-        private static async Task<CodeAnalysisResult> AnalyzeCodeAsync(string sourceCodeDirectory)
+        private static async Task<CodeAnalysisResult> AnalyzeCodeAsync(
+            string sourceCodeDirectory,
+            List<CodeAnalysis.Abstractions.ILanguageAnalysisBackend>? additionalBackends = null)
         {
             // Discover source files through the registered analysis backends
             // (extension-driven). Files whose extension no backend claims are
             // skipped with a warning rather than crashing the run.
             var registry = new AnalysisBackendRegistry()
                 .Register(new RoslynAnalysisBackend());
+            foreach (var backend in additionalBackends ?? new List<CodeAnalysis.Abstractions.ILanguageAnalysisBackend>())
+            {
+                registry.Register(backend);
+            }
             var allFiles = Directory.GetFiles(sourceCodeDirectory, "*", SearchOption.AllDirectories);
             var sourceFiles = allFiles
                 .Where(f => registry.ForFile(f) != null)

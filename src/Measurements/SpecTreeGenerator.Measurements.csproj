@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pipeline\SpecTreeGenerator.Pipeline.csproj" />
+    <ProjectReference Include="..\GeneticAlgorithm\SpecTreeGenerator.GeneticAlgorithm.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>spectree-measure</AssemblyName>
+    <RootNamespace>SpecTreeGenerator.Measurements</RootNamespace>
+  </PropertyGroup>
+
+</Project>

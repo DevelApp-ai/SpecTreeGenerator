@@ -33,6 +33,11 @@ namespace SpecTreeGenerator.DocumentationExtraction.Extractors
         /// Relevance score (0.0 to 1.0)
         /// </summary>
         public double RelevanceScore { get; set; }
+
+        /// <summary>
+        /// Title of the documentation section the snippet was extracted from
+        /// </summary>
+        public string SourceSectionTitle { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -129,6 +134,10 @@ namespace SpecTreeGenerator.DocumentationExtraction.Extractors
 
             // Parse the result
             var snippets = ParseSnippetResult(result.GetValue<string>() ?? "[]");
+            foreach (var snippet in snippets)
+            {
+                snippet.SourceSectionTitle = section.Title;
+            }
 
             // Process child sections recursively
             foreach (var childSection in section.Children)
