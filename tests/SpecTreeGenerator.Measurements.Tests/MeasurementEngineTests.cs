@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using SpecTreeGenerator.Measurements;
+
 using Xunit;
 
 namespace SpecTreeGenerator.Measurements.Tests;
