@@ -9,8 +9,9 @@ permissions:
   contents: read
 
 env:
-  MEASURE_REPOS: >-
-    DevelApp-ai/SpecTreeGenerator
+  # Repositories measured by the battery. SpecTreeGenerator itself is measured
+  # from the local checkout; the others require a token that can read them.
+  MEASURE_SIBLING_REPOS: >-
     DevelApp-ai/CitizenCodeLab
     DevelApp-ai/EventStorming
 
@@ -30,21 +31,26 @@ jobs:
           NUGET_AUTH_TOKEN: ${{ github.token }}
       - name: Publish measurement tool
         run: dotnet publish src/Measurements/SpecTreeGenerator.Measurements.csproj -c Release -o ./artifacts/measure
-      - name: Clone target repositories
+      - name: Clone sibling repositories
         env:
-          # The default GITHUB_TOKEN is scoped to this repository only; the org
-          # PAT (also used for the NuGet source) can read the sibling repos.
-          CLONE_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN || secrets.GITHUB_TOKEN }}
+          # REPO_READ_TOKEN must be a PAT with read access to the sibling
+          # private repositories. When unset (or lacking access), those repos
+          # are skipped with a recorded warning instead of failing the run.
+          CLONE_TOKEN: ${{ secrets.REPO_READ_TOKEN }}
         run: |
-          mkdir -p repos
-          for repo in $MEASURE_REPOS; do
+          mkdir -p repos results
+          cp -R "$(pwd)" repos/SpecTreeGenerator
+          echo "DevelApp-ai/SpecTreeGenerator $(git rev-parse HEAD)" >> results/manifest.txt
+          for repo in $MEASURE_SIBLING_REPOS; do
             name=$(basename "$repo")
-            git clone --depth 1 "https://x-access-token:${CLONE_TOKEN}@github.com/${repo}.git" "repos/$name"
-            echo "$repo $(git -C "repos/$name" rev-parse HEAD)" >> results-manifest.txt
+            if [ -n "$CLONE_TOKEN" ] && git clone --depth 1 "https://x-access-token:${CLONE_TOKEN}@github.com/${repo}.git" "repos/$name" 2>/dev/null; then
+              echo "$repo $(git -C "repos/$name" rev-parse HEAD)" >> results/manifest.txt
+            else
+              echo "WARNING: no read access to $repo (set the REPO_READ_TOKEN secret); skipping" | tee -a results/skipped-repos.txt
+            fi
           done
       - name: Run measurement battery
         run: |
-          mkdir -p results
           MEASURE=./artifacts/measure/spectree-measure
           for repo in repos/*/; do
             name=$(basename "$repo")
@@ -59,7 +65,6 @@ jobs:
           done
           $MEASURE sensitivity --source repos/SpecTreeGenerator --seed 42 \
             > results/sensitivity.json 2> results/sensitivity.log || exit 1
-          cp results-manifest.txt results/manifest.txt
       - name: Upload measurement results
         uses: actions/upload-artifact@v4
         with:
