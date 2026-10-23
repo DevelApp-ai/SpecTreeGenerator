@@ -31,11 +31,13 @@ jobs:
       - name: Publish measurement tool
         run: dotnet publish src/Measurements/SpecTreeGenerator.Measurements.csproj -c Release -o ./artifacts/measure
       - name: Clone target repositories
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           mkdir -p repos
           for repo in $MEASURE_REPOS; do
             name=$(basename "$repo")
-            git clone --depth 1 "https://github.com/${repo}.git" "repos/$name"
+            git clone --depth 1 "https://x-access-token:${GITHUB_TOKEN}@github.com/${repo}.git" "repos/$name"
             echo "$repo $(git -C "repos/$name" rev-parse HEAD)" >> results-manifest.txt
           done
       - name: Run measurement battery
