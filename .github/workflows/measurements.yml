@@ -32,12 +32,14 @@ jobs:
         run: dotnet publish src/Measurements/SpecTreeGenerator.Measurements.csproj -c Release -o ./artifacts/measure
       - name: Clone target repositories
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          # The default GITHUB_TOKEN is scoped to this repository only; the org
+          # PAT (also used for the NuGet source) can read the sibling repos.
+          CLONE_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p repos
           for repo in $MEASURE_REPOS; do
             name=$(basename "$repo")
-            git clone --depth 1 "https://x-access-token:${GITHUB_TOKEN}@github.com/${repo}.git" "repos/$name"
+            git clone --depth 1 "https://x-access-token:${CLONE_TOKEN}@github.com/${repo}.git" "repos/$name"
             echo "$repo $(git -C "repos/$name" rev-parse HEAD)" >> results-manifest.txt
           done
       - name: Run measurement battery
