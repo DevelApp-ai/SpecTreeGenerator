@@ -92,7 +92,7 @@ namespace SpecTreeGenerator.Measurements
                     }
                 case "sensitivity":
                     {
-                        var variants = BuildDefaultSensitivityVariants(seed);
+                        var variants = BuildDefaultSensitivityVariants(seed, maxMinutes);
                         var result = await MeasurementEngine.MeasureParameterSensitivityAsync(source, variants);
                         Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
                         return 0;
@@ -127,17 +127,28 @@ namespace SpecTreeGenerator.Measurements
             }
         }
 
-        private static IEnumerable<(string Name, EvolutionConfig Config)> BuildDefaultSensitivityVariants(int? seed)
+        private static IEnumerable<(string Name, EvolutionConfig Config)> BuildDefaultSensitivityVariants(int? seed, int maxMinutes)
         {
-            yield return ("baseline", new EvolutionConfig { RandomSeed = seed });
-            yield return ("population-small", new EvolutionConfig { PopulationSize = 30, RandomSeed = seed });
-            yield return ("population-large", new EvolutionConfig { PopulationSize = 200, RandomSeed = seed });
-            yield return ("crossover-low", new EvolutionConfig { CrossoverRate = 0.5, RandomSeed = seed });
-            yield return ("crossover-high", new EvolutionConfig { CrossoverRate = 0.95, RandomSeed = seed });
-            yield return ("mutation-low", new EvolutionConfig { MutationRate = 0.02, RandomSeed = seed });
-            yield return ("mutation-high", new EvolutionConfig { MutationRate = 0.3, RandomSeed = seed });
-            yield return ("elitism-none", new EvolutionConfig { ElitismCount = 0, RandomSeed = seed });
-            yield return ("elitism-high", new EvolutionConfig { ElitismCount = 15, RandomSeed = seed });
+            EvolutionConfig Config(int? pop = null, double? crossover = null, double? mutation = null, int? elitism = null) =>
+                new EvolutionConfig
+                {
+                    PopulationSize = pop ?? 100,
+                    CrossoverRate = crossover ?? 0.8,
+                    MutationRate = mutation ?? 0.1,
+                    ElitismCount = elitism ?? 5,
+                    MaxGenerations = Math.Max(1, 60 / Math.Max(1, maxMinutes)),
+                    RandomSeed = seed
+                };
+
+            yield return ("baseline", Config());
+            yield return ("population-small", Config(pop: 30));
+            yield return ("population-large", Config(pop: 200));
+            yield return ("crossover-low", Config(crossover: 0.5));
+            yield return ("crossover-high", Config(crossover: 0.95));
+            yield return ("mutation-low", Config(mutation: 0.02));
+            yield return ("mutation-high", Config(mutation: 0.3));
+            yield return ("elitism-none", Config(elitism: 0));
+            yield return ("elitism-high", Config(elitism: 15));
         }
 
         private static string Value(string[] args, ref int i)

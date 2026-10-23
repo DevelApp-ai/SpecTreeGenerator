@@ -59,15 +59,19 @@ jobs:
             name=$(basename "$repo")
             echo "Measuring $name"
             mkdir -p "results/$name"
-            $MEASURE hierarchy --source "$repo" --output "results/$name/hierarchy" --max-minutes 5 --seed 42 \
-              > "results/$name/hierarchy.json" 2> "results/$name/hierarchy.log" || exit 1
-            $MEASURE optimizers --source "$repo" --max-minutes 5 --seed 42 \
-              > "results/$name/optimizers.json" 2> "results/$name/optimizers.log" || exit 1
-            $MEASURE languages --source "$repo" \
-              > "results/$name/languages.json" 2> "results/$name/languages.log" || exit 1
+            timeout 20m $MEASURE hierarchy --source "$repo" --output "results/$name/hierarchy" --max-minutes 1 --seed 42 \
+              > "results/$name/hierarchy.json" 2> "results/$name/hierarchy.log" \
+              || { echo "hierarchy measurement failed for $name"; rm -f "results/$name/hierarchy.json"; }
+            timeout 20m $MEASURE optimizers --source "$repo" --max-minutes 1 --seed 42 \
+              > "results/$name/optimizers.json" 2> "results/$name/optimizers.log" \
+              || { echo "optimizers measurement failed for $name"; rm -f "results/$name/optimizers.json"; }
+            timeout 10m $MEASURE languages --source "$repo" \
+              > "results/$name/languages.json" 2> "results/$name/languages.log" \
+              || { echo "languages measurement failed for $name"; rm -f "results/$name/languages.json"; }
           done
-          $MEASURE sensitivity --source repos/SpecTreeGenerator --seed 42 \
-            > results/sensitivity.json 2> results/sensitivity.log || exit 1
+          timeout 30m $MEASURE sensitivity --source repos/SpecTreeGenerator --max-minutes 1 --seed 42 \
+            > results/sensitivity.json 2> results/sensitivity.log \
+            || { echo "sensitivity measurement failed"; rm -f results/sensitivity.json; }
       - name: Upload measurement results
         uses: actions/upload-artifact@v4
         with:
