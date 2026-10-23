@@ -31,19 +31,20 @@ jobs:
           NUGET_AUTH_TOKEN: ${{ github.token }}
       - name: Publish measurement tool
         run: dotnet publish src/Measurements/SpecTreeGenerator.Measurements.csproj -c Release -o ./artifacts/measure
-      - name: Clone sibling repositories
+      - name: Stage measured repositories
         env:
           # REPO_READ_TOKEN must be a PAT with read access to the sibling
           # private repositories. When unset (or lacking access), those repos
           # are skipped with a recorded warning instead of failing the run.
           CLONE_TOKEN: ${{ secrets.REPO_READ_TOKEN }}
         run: |
+          set -u
           mkdir -p repos results
-          cp -R "$(pwd)" repos/SpecTreeGenerator
           echo "DevelApp-ai/SpecTreeGenerator $(git rev-parse HEAD)" >> results/manifest.txt
           for repo in $MEASURE_SIBLING_REPOS; do
             name=$(basename "$repo")
-            if [ -n "$CLONE_TOKEN" ] && git clone --depth 1 "https://x-access-token:${CLONE_TOKEN}@github.com/${repo}.git" "repos/$name" 2>/dev/null; then
+            if [ -n "${CLONE_TOKEN:-}" ] \
+              && git clone --depth 1 "https://x-access-token:${CLONE_TOKEN}@github.com/${repo}.git" "repos/$name" 2>/dev/null; then
               echo "$repo $(git -C "repos/$name" rev-parse HEAD)" >> results/manifest.txt
             else
               echo "WARNING: no read access to $repo (set the REPO_READ_TOKEN secret); skipping" | tee -a results/skipped-repos.txt
@@ -52,6 +53,8 @@ jobs:
       - name: Run measurement battery
         run: |
           MEASURE=./artifacts/measure/spectree-measure
+          mkdir -p repos/SpecTreeGenerator
+          rsync -a --exclude artifacts --exclude repos --exclude results . repos/SpecTreeGenerator/
           for repo in repos/*/; do
             name=$(basename "$repo")
             echo "Measuring $name"
