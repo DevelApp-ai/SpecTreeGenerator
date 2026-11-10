@@ -1,0 +1,55 @@
+DevelApp.ai ApS Commercial Software License
+
+Copyright (c) 2026 DevelApp.ai ApS. All rights reserved.
+
+This license governs "SpecTree Generator" (the "Software"), including its
+source code, binaries, documentation, and associated files.
+
+1. Ownership. The Software is the exclusive property of DevelApp.ai ApS,
+   Skoedstrup, Denmark ("Licensor"), and is protected by copyright law and
+   international treaty provisions. Nothing in this document transfers
+   ownership of the Software to any recipient.
+
+2. No open-source license. The Software is not licensed under the MIT
+   License, Apache License, GPL/AGPL, or any other open-source license.
+   No rights in the Software are granted except as expressly stated in
+   this document or in a separate written agreement with the Licensor.
+
+3. Evaluation access. You may download, inspect, and locally build the
+   Software solely to evaluate it for potential commercial licensing.
+   Evaluation grants no right to production use, redistribution, or
+   incorporation of the Software into any product or service.
+
+4. Commercial license required. Any use of the Software beyond
+   evaluation - including production use, internal business use,
+   distribution, sublicensing, sale, modification, or incorporation into
+   a product or service - requires a prior written Commercial License
+   from the Licensor. Commercial licensing is available via
+   https://develapp.ai.
+
+5. Restrictions. Without a Commercial License you must not:
+   a) use the Software for any commercial purpose;
+   b) distribute, sublicense, sell, lease, host, or otherwise make the
+      Software, or any derivative work of it, available to any third
+      party;
+   c) remove, alter, or obscure any copyright or attribution notice in
+      the Software;
+   d) use the Software to create a competing product or service.
+
+6. Feedback and contributions. Feedback, suggestions, and contributions
+   submitted to the Licensor's repositories are provided irrevocably and
+   may be used by the Licensor without restriction or compensation; the
+   Licensor is under no obligation to use them.
+
+7. No warranty. The Software is provided "as is", without warranty of
+   any kind, express or implied, including without limitation the
+   warranties of merchantability, fitness for a particular purpose, and
+   non-infringement.
+
+8. Limitation of liability. In no event shall the Licensor be liable for
+   any claim, damages, or other liability arising from, out of, or in
+   connection with the Software or its use.
+
+9. Governing law. This license is governed by the laws of Denmark.
+
+Contact: DevelApp.ai ApS - https://develapp.ai
