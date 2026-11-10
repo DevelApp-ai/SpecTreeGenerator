@@ -98,3 +98,11 @@ Without a key, the pipeline uses the local fallback extractor.
 | `SpecTreeGenerator.HierarchyOptimization` | Hierarchy optimization driver |
 | `SpecTreeGenerator.Pipeline` | End-to-end pipeline orchestration |
 | `Sample` | Runnable sample application |
+
+## License
+
+This project is proprietary software owned by DevelApp.ai ApS. It is **not**
+licensed under the MIT License or any other open-source license. Use,
+redistribution, and modification are governed by the DevelApp.ai ApS
+commercial license - see the [LICENSE](LICENSE) file for details.
+Commercial licensing is available via [develapp.ai](https://develapp.ai).
